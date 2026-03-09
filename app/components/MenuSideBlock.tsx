@@ -1,9 +1,9 @@
 import { BookOpen, Users, HelpCircle, Play, LogIn, Info, Angry, } from "lucide-react";
 export default function MenuSideBlock() {
     return (
-        <div className="w-80 h-full bg-slate-900/50 backdrop-blur-md border-r border-slate-700 p-8 flex flex-col overflow-y-auto custom-scrollbar text-slate-200">
+        <div className="w-80 h-100vh dark:bg-slate-900 bg-gray-200 backdrop-blur-md border-r border-slate-700 p-8 flex flex-col overflow-y-auto custom-scrollbar text-slate-200">
             <div className="flex items-center gap-3 mb-8">
-                <div className="p-2 bg-blue-600 rounded-lg">
+                <div className="p-2  dark:bg-blue-600 bg-blue-700 rounded-lg">
                     <Info size={24} />
                 </div>
                 <h2 className="text-2xl font-bold tracking-tight text-white">About</h2>
