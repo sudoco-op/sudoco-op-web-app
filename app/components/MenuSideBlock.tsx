@@ -42,14 +42,12 @@ export default function MenuSideBlock() {
       {/* Tips List */}
       <ul className="space-y-6 text-sm">
         <li className="flex gap-4 group">
-          <div className="w-1 h-auto bg-[var(--border-color)] group-hover:bg-[var(--primary)] transition-colors rounded-full" />
           <p className="leading-snug">
             Each <span className="text-[var(--text-main)] font-medium">3x3 subgrid</span>{" "}
             must contain all digits from 1 to 9.
           </p>
         </li>
         <li className="flex gap-4 group">
-          <div className="w-1 h-auto bg-[var(--border-color)] group-hover:bg-[var(--primary)] transition-colors rounded-full" />
           <p className="leading-snug">
             Each <span className="text-[var(--text-main)] font-medium">row</span> and{" "}
             <span className="text-[var(--text-main)] font-medium">column</span> must contain
@@ -57,7 +55,6 @@ export default function MenuSideBlock() {
           </p>
         </li>
         <li className="flex gap-4 group">
-          <div className="w-1 h-auto bg-[var(--border-color)] group-hover:bg-[var(--primary)] transition-colors rounded-full" />
           <p className="leading-snug">
             Look for <span className="text-[var(--text-main)] font-medium">rows, columns</span> and{" "}
             <span className="text-[var(--text-main)] font-medium">3×3 boxes</span> with just
@@ -65,13 +62,11 @@ export default function MenuSideBlock() {
           </p>
         </li>
         <li className="flex gap-4 group">
-          <div className="w-1 h-auto bg-[var(--border-color)] group-hover:bg-[var(--primary)] transition-colors rounded-full" />
-          <p className="leading-snug">
+                <p className="leading-snug">
             Communicate! You can see your partner's moves instantly.
           </p>
         </li>
         <li className="flex gap-4 group">
-          <div className="w-1 h-auto bg-[var(--danger)] transition-colors rounded-full" />
           <p className="leading-snug">
             You only have <span className="text-[var(--danger)] font-bold">3</span>{" "}
             possible mistakes. After the last wrong number, the grid will be
