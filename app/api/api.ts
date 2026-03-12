@@ -1,20 +1,22 @@
 import axios from "axios";
 
 export type BoardCell = {
-    CellValue: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-    IsCorrect: boolean;
-    CellNotes: (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)[];
+    cellValue: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+    isCorrect: boolean;
+    cellNotes: (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)[];
 }
 
 export type Game = {
-    Id: string;
-    PlayerIds: string[];
-    BoardState: BoardCell[];
+    id: string;
+    playerIds: string[];
+    boardState: BoardCell[];
 }
+
 export type CreateGameResponse = {
-    UserJwt: string;
-    Game: Game;
+    userJwt: string;
+    game: Game;
 }
+
 export type JoinGameResponse = CreateGameResponse;
 
 export const api = {
