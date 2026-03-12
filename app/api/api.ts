@@ -33,3 +33,17 @@ export const api = {
         return response.data;
     }
 }
+
+export const websocketEvents = {
+    ReciveNewPlayerJoined: "ReciveNewPlayerJoined",
+    ReciveMarkCell: "ReciveMarkCell",
+    ReciveStartGame: "ReciveStartGame",
+    ReciveAddNote: "ReciveAddNote",
+    ReciveRemoveNote: "ReciveRemoveNote"
+}
+
+export const websocketEmits = {
+    MarkCell: "MarkCell",
+    AddNote: "AddNote",
+    RemoveNote: "RemoveNote"
+}

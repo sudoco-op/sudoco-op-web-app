@@ -1,5 +1,7 @@
 
+import { api } from "~/api/api";
 import type { Route } from "./+types/gameLobby";
+import { GameLobby } from "~/game/GameLobby";
 
 export function meta({ }: Route.MetaArgs) {
     return [
@@ -8,11 +10,11 @@ export function meta({ }: Route.MetaArgs) {
     ];
 }
 
-export async function loader({ params } : Route.LoaderArgs) {
-    // TODO: fech from the backend
-    return { userList: ["user1"] }
+export async function clientLoader({ params }: Route.LoaderArgs) {
+    const response = await api.getGameData(params.gameId);
+    return response;
 }
 
 export default function GameLobbyRoute({ loaderData }: Route.ComponentProps) {
-    return <div />;
+    return <GameLobby gameData={loaderData} />;
 }
