@@ -28,7 +28,7 @@ export const api = {
         const response = await axios.post(`http://localhost:5254/GamesControler/join/${gameId}`);
         return response.data;
     },
-    getGameData: async (gameId: string, userJwt: string): Promise<Game> => {
+    getGameData: async (gameId: string): Promise<Game> => {
         const response = await axios.get(`http://localhost:5254/GamesControler/${gameId}`);
         return response.data;
     }
