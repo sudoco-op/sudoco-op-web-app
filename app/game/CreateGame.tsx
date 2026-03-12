@@ -20,7 +20,7 @@ export const CreateGame = () => {
     const startGame = async () => {
         const response = await api.createGame();
         setUserToken(response.userJwt);
-        navigate(`/game-lobby/:${response.gameId}`);
+        navigate(`/game-lobby/${response.game.id}`);
     }
 
     const [activeDifficulty, setActiveDifficulty] = useState<0 | 1 | 2>(1);
