@@ -2,19 +2,19 @@ import axios from "axios";
 import { join } from "path";
 
 export type BoardCell = {
-    cellValue: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-    isCorrect: boolean;
-    cellNotes: (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)[];
+    CellValue: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+    IsCorrect: boolean;
+    CellNotes: (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)[];
 }
 
 export type Game = {
-    id: string;
-    playerIds: string[];
+    Id: string;
+    PlayerIds: string[];
+    BoardState: BoardCell[];
 }
 export type CreateGameResponse = {
-    userJwt: string;
-    gameId: string;
-    board: BoardCell[];
+    UserJwt: string;
+    Game: Game;
 }
 export type JoinGameResponse = CreateGameResponse;
 
