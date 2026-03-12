@@ -11,10 +11,12 @@ export type Game = {
     playerIds: string[];
     boardState: BoardCell[];
 }
+
 export type CreateGameResponse = {
     userJwt: string;
     game: Game;
 }
+
 export type JoinGameResponse = CreateGameResponse;
 
 export const api = {
