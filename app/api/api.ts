@@ -8,6 +8,7 @@ export type BoardCell = {
 
 export type Game = {
     id: string;
+    code: string;
     playerIds: string[];
     boardState: BoardCell[];
 }
@@ -24,8 +25,8 @@ export const api = {
         const response = await axios.post("http://localhost:5254/GamesControler/create");
         return response.data;
     },
-    joinGame: async (gameId: string): Promise<JoinGameResponse> => {
-        const response = await axios.post(`http://localhost:5254/GamesControler/join/${gameId}`);
+    joinGame: async (gameCode: string): Promise<JoinGameResponse> => {
+        const response = await axios.post(`http://localhost:5254/GamesControler/join/${gameCode}`);
         return response.data;
     },
     getGameData: async (gameId: string): Promise<Game> => {
