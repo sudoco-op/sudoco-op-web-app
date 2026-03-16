@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+@keyframes float-bg {
+  0%, 100% { --bg-pos: 25%; }
+  50% { --bg-pos: 75%; }
+}
+
+/* properfty for animation class */
+@property --bg-pos {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 25%;
+}
+
+/* animation class*/
+.animate-float-bg {
+  animation: float-bg 10s ease-in-out infinite;
+}
 
 :root {
   --bg-main: #f8fafc;

@@ -6,7 +6,7 @@ import MenuSideBlock from '~/components/MenuSideBlock';
 
 export function Menu() {
   return (
-    <div className="min-h-screen w-screen bg-(--bg-main) flex font-sans text-(--text-main) overflow-hidden transition-colors duration-300 ">
+    <div className="min-h-screen w-screen animate-float-bg bg-radial-[at_75%_var(--bg-pos)] from-(--bg-main) to-(--bg-card) flex font-sans text-(--text-main) overflow-hidden transition-colors duration-300 ">
       {/* SideBlock component */}
       <MenuSideBlock />
       
