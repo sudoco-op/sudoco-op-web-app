@@ -31,5 +31,23 @@ export const api = {
     getGameData: async (gameId: string): Promise<Game> => {
         const response = await axios.get(`http://localhost:5254/GamesControler/${gameId}`);
         return response.data;
+    },
+    startGame: async (gameId: string) => {
+        const response = await axios.post(`http://localhost:5254/GamesControler/start/${gameId}`)
+        return response.data;
     }
+}
+
+export const websocketEvents = {
+    ReciveNewPlayerJoined: "ReciveNewPlayerJoined",
+    ReciveMarkCell: "ReciveMarkCell",
+    ReciveStartGame: "ReciveStartGame",
+    ReciveAddNote: "ReciveAddNote",
+    ReciveRemoveNote: "ReciveRemoveNote"
+}
+
+export const websocketEmits = {
+    MarkCell: "MarkCell",
+    AddNote: "AddNote",
+    RemoveNote: "RemoveNote"
 }

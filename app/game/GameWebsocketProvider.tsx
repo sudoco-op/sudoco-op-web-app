@@ -3,9 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Outlet } from "react-router";
 import { getUserToken } from "~/auth/auth";
 
-const SignalRContext = createContext<HubConnection | null>(null)
-
-export const useSignalR = () => useContext(SignalRContext);
+export type WebsocketConnectionContext = HubConnection | null;
 
 const GameWebsocketProvider = () => {
     const [connection, setConnection] = useState<HubConnection | null>(null);
@@ -37,9 +35,7 @@ const GameWebsocketProvider = () => {
     }, []);
 
     return (
-        <SignalRContext.Provider value={connection}>
-            <Outlet />
-        </SignalRContext.Provider>
+        <Outlet context={connection} />
     );
 }
 
