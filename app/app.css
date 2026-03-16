@@ -3,6 +3,7 @@
 
 :root {
   --bg-main: #f8fafc;
+  --bg-header: #6a6a82;
   --bg-sidebar: #e2e8f0;
   --bg-card: #ffffff;
 
@@ -16,11 +17,13 @@
   --danger: #ef4444;
 
   --border-color: #cbd5e1;
+
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --bg-main: #020617;
+    --bg-header: #020617;
     --bg-sidebar: #0f172a;
     --bg-card: #1e293b;
 
@@ -34,5 +37,6 @@
     --danger: #f87171;
 
     --border-color: #334155;
+
   }
 }
