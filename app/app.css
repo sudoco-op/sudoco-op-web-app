@@ -1,15 +1,31 @@
 @import "tailwindcss";
 
+@keyframes float-bg {
+  0%, 100% { --bg-pos: 25%; }
+  50% { --bg-pos: 75%; }
+}
+
+/* properfty for animation class */
+@property --bg-pos {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 25%;
+}
+
+/* animation class*/
+.animate-float-bg {
+  animation: float-bg 10s ease-in-out infinite;
+}
 
 :root {
   --bg-main: #f8fafc;
   --bg-header: #6a6a82;
   --bg-sidebar: #e2e8f0;
-  --bg-card: #ffffff;
+  --bg-card: #d2d2d2;
 
   --text-main: #0f172a;
   --text-muted: #475569;
-  --text-inverse: #ffffff;
+  --text-inverse: #c0c0c0;
 
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
