@@ -13,20 +13,21 @@ export const JoinGame: React.FC = () => {
     const joinGame = async () => {
 
         try {
-            const response = await api.joinGame(code.join())
+            const response = await api.joinGame(code.join(""))
             setUserToken(response.userJwt);
             navigate(`/game-lobby/${response.game.id}`);
         } catch (e) {
-            alert("No game with that CODE found")
+            alert("No game with "+code.join("")+" found")
         }
 
     }
 
     const handleChange = (target: HTMLInputElement, index: number) => {
+        
         const value = target.value.replace(/[^0-9]/g, "");
-        if (!value) return;
 
         const newCode = [...code];
+
         newCode[index] = value.substring(value.length - 1);
         setCode(newCode);
 
@@ -36,18 +37,27 @@ export const JoinGame: React.FC = () => {
     };
 
     const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-        const pasted = e.clipboardData?.getData("text") || "";
-        const data = pasted.trim().slice(0, 6).split("");
+        e.preventDefault();
+
+        const pastedData = e.clipboardData.getData("text").replace(/[^0-9]/g,"")
+        if (!pastedData) return;
+        
+        const data = pastedData.trim().slice(0, 6).split("");
         const newCode = [...code];
-        let lastFilled = -1;
+
+        console.log("Code ",newCode)
+
+        let lastFilled = 0;
         data.forEach((char, i) => {
             if (/[0-9]/.test(char)) {
                 newCode[i] = char;
                 lastFilled = i;
             }
         });
+
         setCode(newCode);
-        const nextIndex = Math.min(Math.max(lastFilled + 1, 0), 5);
+
+        const nextIndex = Math.min(lastFilled+1, 5);
         inputsRef.current[nextIndex]?.focus();
     };
 
