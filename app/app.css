@@ -36,7 +36,8 @@
 
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) { 
+  /* dark theme */
   :root {
     --bg-main: #020617;
     --bg-header: #020617;
