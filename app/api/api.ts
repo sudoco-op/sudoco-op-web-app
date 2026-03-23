@@ -3,7 +3,7 @@ import axios from "axios";
 export type BoardCell = {
     cellValue: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
     isCorrect: boolean;
-    cellNotes: (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)[];
+    cellNotes: (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)[];
 }
 
 export type Game = {
