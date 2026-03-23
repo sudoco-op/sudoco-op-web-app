@@ -1,4 +1,5 @@
 
+import { GameBoard } from "~/game/GameBoard";
 import type { Route } from "./+types/gameBoard";
 
 export function meta({ }: Route.MetaArgs) {
@@ -8,11 +9,11 @@ export function meta({ }: Route.MetaArgs) {
     ];
 }
 
-export async function loader({ params } : Route.LoaderArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
     // TODO: fech from the backend
     return { userList: ["user1"] }
 }
 
 export default function GameBoardRoute({ loaderData }: Route.ComponentProps) {
-    return <div />;
+    return <GameBoard />;
 }

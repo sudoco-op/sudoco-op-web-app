@@ -1,0 +1,222 @@
+import { Eraser, NotebookPen, RotateCcw } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { BoardCell, Game } from "~/api/api";
+import { initialGrid } from "./initialBoard";
+
+type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
+const digits: Digit[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
+    const [board, setBoard] = useState(initialGrid);
+    const [selectedCellIndex, setSelectedCellIndex] = useState<number | null>(null);
+    const [noteModeActive, setNoteModeActive] = useState<boolean>(false);
+
+    const selectedCellIndexRow = useMemo(() => {
+        if (selectedCellIndex == null) return null;
+        return Math.floor(selectedCellIndex / 9);
+    }, [selectedCellIndex]);
+
+    const selectedCellIndexCol = useMemo(() => {
+        if (selectedCellIndex == null) return null;
+        return selectedCellIndex % 9;
+    }, [selectedCellIndex]);
+
+    const setNumber = useCallback((index: number, value: Digit, isCorrect: boolean) => {
+        setBoard(prevBoard => prevBoard.map((cell, i) => i === index ? { ...cell, cellValue: value, isCorrect: isCorrect } : cell));
+    }, []);
+
+    const addNote = useCallback((index: number, value: Digit) => {
+        setBoard(prevBoard =>
+            prevBoard.map((cell, i) => i === index ?
+                {
+                    ...cell,
+                    cellNotes: cell.cellNotes.map((prevNote, noteIndex) => noteIndex === value - 1 ? value : prevNote)
+                } : cell))
+    }, []);
+
+    const removeNote = useCallback((index: number, value: Digit) => {
+        setBoard(prevBoard =>
+            prevBoard.map((cell, i) => i === index ?
+                {
+                    ...cell,
+                    cellNotes: cell.cellNotes.map((prevNote, noteIndex) => noteIndex === value - 1 ? 0 : prevNote)
+                } : cell))
+    }, []);
+
+    const clearNumber = useCallback((index: number) => {
+        setBoard(prevBoard => prevBoard.map((cell, i) => i === index ? { ...cell, cellValue: 0 } : cell));
+    }, []);
+
+    const clearNotes = useCallback((index: number) => {
+        setBoard(prevBoard =>
+            prevBoard.map((cell, i) => i === index ?
+                {
+                    ...cell,
+                    cellNotes: cell.cellNotes.map(_ => 0)
+                } : cell));
+    }, [])
+
+    const toggleNote = useCallback((index: number, value: Digit) => {
+        if (board[index].cellNotes[value - 1] === 0) addNote(index, value)
+        else removeNote(index, value);
+    }, [board, addNote, removeNote]);
+
+    const handleInput = useCallback((value: Digit) => {
+        if (selectedCellIndex === null) return;
+        if (noteModeActive) toggleNote(selectedCellIndex, value);
+        else setNumber(selectedCellIndex, value, true);
+    }, [selectedCellIndex, noteModeActive, toggleNote, setNumber])
+
+    const handleClear = useCallback(() => {
+        if (selectedCellIndex === null) return;
+        if (board[selectedCellIndex].cellValue === 0) clearNotes(selectedCellIndex);
+        else clearNumber(selectedCellIndex);
+    }, [board, selectedCellIndex, noteModeActive, toggleNote, setNumber])
+
+    useEffect(() => {
+        const handleKeyEvent = (e: KeyboardEvent) => {
+
+            const calmpIndex = (index: number) => Math.min(Math.max(index, 0), 80)
+
+            if (e.key === "ArrowLeft") {
+                setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev - 1) : 40);
+                return;
+            }
+
+            if (e.key === "ArrowRight") {
+                setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev + 1) : 40);
+                return;
+            }
+
+            if (e.key === "ArrowUp") {
+                setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev - 9) : 40);
+                return;
+            }
+
+            if (e.key === "ArrowDown") {
+                setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev + 9) : 40);
+                return;
+            }
+
+            if (e.key === "n") {
+                setNoteModeActive(prev => !prev);
+                return;
+            }
+        }
+
+        document.addEventListener("keydown", handleKeyEvent);
+        return () => {
+            document.removeEventListener("keydown", handleKeyEvent);
+        }
+    }, [])
+
+    useEffect(()=>{
+        const handleKeyEvent = (e: KeyboardEvent) => {
+            if (e.key === "c") {
+                handleClear();
+                return;
+            }
+
+            const digitClicked = Number(e.key) as Digit;
+            if (digits.includes(digitClicked)) {
+                handleInput(digitClicked);
+                return;
+            }
+        }
+
+        document.addEventListener("keydown", handleKeyEvent)
+        return () => {
+            document.removeEventListener("keydown", handleKeyEvent);
+        }
+    }, [handleClear, handleInput]);
+
+    return (
+        <div className="h-screen w-screen bg-(--bg-main) flex flex-col sm:justify-center items-center font-sans text-(--text-main) overflow-x-hidden transition-colors duration-300 px-2 py-4">
+            <div className="w-full flex gap-x-10 gap-y-10 justify-center items-center flex-col md:flex-row">
+                <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-white">
+                    {board.map((cell, index) => {
+                        const rowIndex = Math.floor(index / 9);
+                        const colIndex = index % 9;
+
+                        let sameQuadrant;
+                        if (selectedCellIndexCol === null || selectedCellIndexRow === null) sameQuadrant = null;
+                        else sameQuadrant = Math.floor(selectedCellIndexCol / 3) == Math.floor(colIndex / 3) && Math.floor(selectedCellIndexRow / 3) === Math.floor(rowIndex / 3);
+                        const highlight = selectedCellIndexRow === rowIndex || selectedCellIndexCol === colIndex || sameQuadrant;
+
+                        let sameNumber;
+                        if (cell.cellValue === 0 || selectedCellIndex === null) sameNumber = null;
+                        else sameNumber = board[selectedCellIndex].cellValue === cell.cellValue;
+
+                        const thickBorderRight = (colIndex + 1) % 3 === 0 && colIndex !== 8;
+                        const thickBorderBottom = (rowIndex + 1) % 3 === 0 && rowIndex !== 8;
+
+                        return (
+                            <div
+                                key={index}
+                                className={`
+                                    ${selectedCellIndex === index && "bg-slate-600"}
+                                    ${selectedCellIndex !== index && !sameNumber && highlight && "bg-slate-900"}
+                                    ${selectedCellIndex !== index && sameNumber && "bg-olive-900"}
+                                    aspect-square
+                                    flex items-center justify-center
+                                    text-xl sm:text-2xl font-light
+                                    cursor-pointer border-gray-500
+                                    transition-colors hover:bg-slate-600
+                                    ${thickBorderRight ? "border-r-2 border-r-white" : "border-r border-r-slate-500"} ${thickBorderBottom ? "border-b-2 border-b-white" : "border-b border-b-slate-500"}
+                                    ${colIndex === 8 ? 'border-r-0' : ''}
+                                    ${rowIndex === 8 ? 'border-b-0' : ''}
+                                `}
+                                onClick={() => {
+                                    setSelectedCellIndex(index);
+                                }}
+                            >
+                                {cell.cellValue !== 0 && cell.cellValue}
+                                {cell.cellValue === 0 &&
+                                    <div className="w-full h-full grid grid-cols-3 text-xs sm:text-sm">
+                                        {cell.cellNotes.map((noteValue, noteIndex) => (
+                                            <div key={`${index}-${noteIndex}`} className="flex justify-center items-center">
+                                                {noteValue !== 0 && noteValue}
+                                            </div>
+                                        ))}
+                                    </div>
+                                }
+                            </div>
+                        );
+                    })}
+                </div>
+
+                <div className="flex flex-col gap-6">
+                    <div className="grid grid-cols-9 md:grid-cols-3 gap-3">
+                        {digits.map(value => (
+                            <button key={value} className="sm:w-15 text-2xl bg-slate-900 sm:rounded-lg rounded-xl flex justify-center items-center aspect-square hover:cursor-pointer p-2 transition-colors hover:text-(--primary-hover)"
+                                onClick={() => handleInput(value)}
+                            >
+                                {value}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="flex justify-center items-center gap-5">
+                        <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-slate-900 gap-3 hover:text-(--primary-hover)"
+                            onClick={() => handleClear()}
+                        >
+                            <Eraser />
+                            Usuń
+                        </button>
+
+                        <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-slate-900 relative gap-3 hover:text-(--primary-hover)"
+                            onClick={() => setNoteModeActive(prev => !prev)}
+                        >
+                            <NotebookPen />
+                            <div className={`text-white absolute right-1 top-7 text-xs p-1 rounded-lg ${noteModeActive ? "bg-(--primary)" : "bg-slate-800"}`}>
+                                {noteModeActive ? "ON" : "OFF"}
+                            </div>
+                            Notatki
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
