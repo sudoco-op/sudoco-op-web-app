@@ -20,21 +20,25 @@ export type CreateGameResponse = {
 
 export type JoinGameResponse = CreateGameResponse;
 
+const getApiPath = () => {
+    return `${document.location.host.replace(document.location.port, "5254")}`;
+}
+
 export const api = {
     createGame: async (): Promise<CreateGameResponse> => {
-        const response = await axios.post("http://localhost:5254/GamesControler/create");
+        const response = await axios.post(`http://${getApiPath()}/GamesControler/create`);
         return response.data;
     },
     joinGame: async (gameCode: string): Promise<JoinGameResponse> => {
-        const response = await axios.post(`http://localhost:5254/GamesControler/join/${gameCode}`);
+        const response = await axios.post(`http://${getApiPath()}/GamesControler/join/${gameCode}`);
         return response.data;
     },
     getGameData: async (gameId: string): Promise<Game> => {
-        const response = await axios.get(`http://localhost:5254/GamesControler/${gameId}`);
+        const response = await axios.get(`http://${getApiPath()}/GamesControler/${gameId}`);
         return response.data;
     },
     startGame: async (gameId: string) => {
-        const response = await axios.post(`http://localhost:5254/GamesControler/start/${gameId}`)
+        const response = await axios.post(`http://${getApiPath()}/GamesControler/start/${gameId}`)
         return response.data;
     }
 }

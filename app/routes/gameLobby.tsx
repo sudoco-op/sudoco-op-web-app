@@ -2,6 +2,7 @@
 import { api } from "~/api/api";
 import type { Route } from "./+types/gameLobby";
 import { GameLobby } from "~/game/GameLobby";
+import { redirect } from "react-router";
 
 export function meta({ }: Route.MetaArgs) {
     return [
@@ -11,8 +12,13 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 export async function clientLoader({ params }: Route.LoaderArgs) {
-    const response = await api.getGameData(params.gameId);
-    return response;
+    try {
+        const response = await api.getGameData(params.gameId);
+        return response;
+    }
+    catch (e) {
+        throw redirect("/");
+    }
 }
 
 export default function GameLobbyRoute({ loaderData }: Route.ComponentProps) {
