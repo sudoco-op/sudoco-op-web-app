@@ -20,7 +20,7 @@ export type CreateGameResponse = {
 
 export type JoinGameResponse = CreateGameResponse;
 
-const getApiPath = () => {
+export const getApiPath = () => {
     return `${document.location.host.replace(document.location.port, "5254")}`;
 }
 

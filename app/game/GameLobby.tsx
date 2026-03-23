@@ -43,6 +43,9 @@ export const GameLobby = ({ gameData }: { gameData: Game }) => {
                     {`Player ${index + 1}`}
                 </div>
             ))}
+            <div>
+                {gameData.code}
+            </div>
             {isHost &&
                 <button className="mt-80 border-4 border-[var(--border-color)] py-5 px-14 hover:cursor-pointer bg-[var(--primary)] hover:bg-[var(--primary-hover)] rounded-lg"
                     onClick={startGame}
