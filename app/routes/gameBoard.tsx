@@ -1,6 +1,8 @@
 
 import { GameBoard } from "~/game/GameBoard";
 import type { Route } from "./+types/gameBoard";
+import { api } from "~/api/api";
+import { redirect } from "react-router";
 
 export function meta({ }: Route.MetaArgs) {
     return [
@@ -9,11 +11,16 @@ export function meta({ }: Route.MetaArgs) {
     ];
 }
 
-export async function loader({ params }: Route.LoaderArgs) {
-    // TODO: fech from the backend
-    return { userList: ["user1"] }
+export async function clientLoader({ params }: Route.LoaderArgs) {
+    try {
+        const response = await api.getGameData(params.gameId);
+        return response;
+    }
+    catch (e) {
+        throw redirect("/");
+    }
 }
 
 export default function GameBoardRoute({ loaderData }: Route.ComponentProps) {
-    return <GameBoard />;
+    return <GameBoard initialGame={loaderData} />;
 }

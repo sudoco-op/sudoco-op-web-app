@@ -1,16 +1,36 @@
-import { Eraser, NotebookPen, RotateCcw } from "lucide-react";
+import { Eraser, NotebookPen } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { BoardCell, Game } from "~/api/api";
-import { initialGrid } from "./initialBoard";
+import { useOutletContext } from "react-router";
+import { websocketEmits, websocketEvents, type Game } from "~/api/api";
+import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
 
 type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 const digits: Digit[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
-    const [board, setBoard] = useState(initialGrid);
+    const [board, setBoard] = useState(initialGame.boardState);
     const [selectedCellIndex, setSelectedCellIndex] = useState<number | null>(null);
     const [noteModeActive, setNoteModeActive] = useState<boolean>(false);
+
+    const websocketConnection = useOutletContext<WebsocketConnectionContext>();
+
+    useEffect(() => {
+        if (websocketConnection) {
+            websocketConnection.on(websocketEvents.ReciveMarkCell, (cellNumber: number, markValue: number, isCorrect: boolean) => {
+                if (markValue !== 0) setNumber(cellNumber, markValue as Digit, isCorrect);
+                else clearNumber(cellNumber);
+            });
+            websocketConnection.on(websocketEvents.ReciveAddNote, addNote);
+            websocketConnection.on(websocketEvents.ReciveRemoveNote, removeNote)
+        }
+
+        return () => {
+            websocketConnection?.off(websocketEvents.ReciveMarkCell);
+            websocketConnection?.off(websocketEvents.ReciveAddNote);
+            websocketConnection?.off(websocketEvents.ReciveRemoveNote);
+        }
+    }, [websocketConnection]);
 
     const selectedCellIndexRow = useMemo(() => {
         if (selectedCellIndex == null) return null;
@@ -48,31 +68,40 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
         setBoard(prevBoard => prevBoard.map((cell, i) => i === index ? { ...cell, cellValue: 0 } : cell));
     }, []);
 
-    const clearNotes = useCallback((index: number) => {
-        setBoard(prevBoard =>
-            prevBoard.map((cell, i) => i === index ?
-                {
-                    ...cell,
-                    cellNotes: cell.cellNotes.map(_ => 0)
-                } : cell));
-    }, [])
+    // TODO: add enpoint for clear all notes
+    // const clearNotes = useCallback((index: number) => {
+    //     setBoard(prevBoard =>
+    //         prevBoard.map((cell, i) => i === index ?
+    //             {
+    //                 ...cell,
+    //                 cellNotes: cell.cellNotes.map(_ => 0)
+    //             } : cell));
+    // }, [])
 
     const toggleNote = useCallback((index: number, value: Digit) => {
-        if (board[index].cellNotes[value - 1] === 0) addNote(index, value)
-        else removeNote(index, value);
-    }, [board, addNote, removeNote]);
+        if (!websocketConnection || websocketConnection.state !== "Connected") return;
+        if (board[index].cellNotes[value - 1] === 0) websocketConnection.invoke(websocketEmits.AddNote, index, value);
+        else websocketConnection.invoke(websocketEmits.RemoveNote, index, value);
+    }, [board, addNote, removeNote, websocketConnection]);
 
     const handleInput = useCallback((value: Digit) => {
+        if (!websocketConnection || websocketConnection.state !== "Connected") return;
         if (selectedCellIndex === null) return;
         if (noteModeActive) toggleNote(selectedCellIndex, value);
-        else setNumber(selectedCellIndex, value, true);
-    }, [selectedCellIndex, noteModeActive, toggleNote, setNumber])
+        else websocketConnection.invoke(websocketEmits.MarkCell, selectedCellIndex, value);
+    }, [selectedCellIndex, noteModeActive, toggleNote, setNumber, websocketConnection])
+
+    const handleClearNotes = useCallback((index: number) => { // TODO: remove after adding endpoint for clearing notes
+        if (!websocketConnection || websocketConnection.state !== "Connected") return;
+        for (let i of digits) websocketConnection.invoke(websocketEmits.RemoveNote, index, i);
+    }, [websocketConnection])
 
     const handleClear = useCallback(() => {
+        if (!websocketConnection || websocketConnection.state !== "Connected") return;
         if (selectedCellIndex === null) return;
-        if (board[selectedCellIndex].cellValue === 0) clearNotes(selectedCellIndex);
-        else clearNumber(selectedCellIndex);
-    }, [board, selectedCellIndex, noteModeActive, toggleNote, setNumber])
+        if (board[selectedCellIndex].cellValue === 0) handleClearNotes(selectedCellIndex); // TODO: add endpoint for clearing cell notes
+        else websocketConnection.invoke(websocketEmits.MarkCell, selectedCellIndex, 0);
+    }, [board, selectedCellIndex, noteModeActive, toggleNote, setNumber, handleClearNotes, websocketConnection])
 
     useEffect(() => {
         const handleKeyEvent = (e: KeyboardEvent) => {
@@ -111,7 +140,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
         }
     }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
         const handleKeyEvent = (e: KeyboardEvent) => {
             if (e.key === "c") {
                 handleClear();
@@ -155,9 +184,10 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                             <div
                                 key={index}
                                 className={`
-                                    ${selectedCellIndex === index && "bg-slate-600"}
-                                    ${selectedCellIndex !== index && !sameNumber && highlight && "bg-slate-900"}
-                                    ${selectedCellIndex !== index && sameNumber && "bg-olive-900"}
+                                    ${!cell.isCorrect && cell.cellValue !== 0 && "bg-red-900"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex === index && "bg-slate-600"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && !sameNumber && highlight && "bg-slate-900"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && sameNumber && "bg-olive-900"}
                                     aspect-square
                                     flex items-center justify-center
                                     text-xl sm:text-2xl font-light
