@@ -20,25 +20,23 @@ export type CreateGameResponse = {
 
 export type JoinGameResponse = CreateGameResponse;
 
-export const getApiPath = () => {
-    return `${document.location.host.replace(document.location.port, "5254")}`;
-}
+export const API_URL = import.meta.env.VITE_API_URL;
 
 export const api = {
     createGame: async (): Promise<CreateGameResponse> => {
-        const response = await axios.post(`http://${getApiPath()}/GamesControler/create`);
+        const response = await axios.post(`${API_URL}/GamesControler/create`);
         return response.data;
     },
     joinGame: async (gameCode: string): Promise<JoinGameResponse> => {
-        const response = await axios.post(`http://${getApiPath()}/GamesControler/join/${gameCode}`);
+        const response = await axios.post(`${API_URL}/GamesControler/join/${gameCode}`);
         return response.data;
     },
     getGameData: async (gameId: string): Promise<Game> => {
-        const response = await axios.get(`http://${getApiPath()}/GamesControler/${gameId}`);
+        const response = await axios.get(`${API_URL}/GamesControler/${gameId}`);
         return response.data;
     },
     startGame: async (gameId: string) => {
-        const response = await axios.post(`http://${getApiPath()}/GamesControler/start/${gameId}`)
+        const response = await axios.post(`${API_URL}/GamesControler/start/${gameId}`)
         return response.data;
     }
 }

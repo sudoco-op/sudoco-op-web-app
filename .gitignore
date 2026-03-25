@@ -26,3 +26,6 @@ dist-ssr
 .react-router
 
 /.env
+/.env.development
+/.env.production
+/build

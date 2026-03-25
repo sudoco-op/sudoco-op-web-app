@@ -1,7 +1,7 @@
 import { HubConnectionBuilder, type HubConnection } from "@microsoft/signalr";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Outlet } from "react-router";
-import { getApiPath } from "~/api/api";
+import { API_URL } from "~/api/api";
 import { getUserToken } from "~/auth/auth";
 
 export type WebsocketConnectionContext = HubConnection | null;
@@ -11,7 +11,7 @@ const GameWebsocketProvider = () => {
 
     useEffect(() => {
         const newConnection = new HubConnectionBuilder()
-            .withUrl(`http://${getApiPath()}/game-hub`, {
+            .withUrl(`${API_URL}/game-hub`, {
                 accessTokenFactory: () => {
                     const token = getUserToken();
                     return token ? token : "";
