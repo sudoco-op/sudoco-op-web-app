@@ -4,6 +4,10 @@ import { getUserId } from "~/auth/auth";
 import { useNavigate, useOutletContext } from "react-router";
 import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
 
+import FooterBlock from "~/components/FooterBlock";
+import HeaderBlock from "~/components/HeaderBlock";
+import LobbyPlayerCard from "~/components/LobbyPlayerCard";
+
 export const GameLobby = ({ gameData }: { gameData: Game }) => {
     const navigation = useNavigate();
     const [players, setPlayers] = useState(gameData.playerIds);
@@ -36,12 +40,27 @@ export const GameLobby = ({ gameData }: { gameData: Game }) => {
         await api.startGame(gameData.id);
     }, [gameData])
 
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, []);
+
     return (
-        <div className="min-h-screen w-screen bg-(--bg-main) flex flex-col justify-center items-center font-sans text-(--text-main) overflow-hidden transition-colors duration-300 ">
+        <div className="
+        min-h-screen w-screen        
+        animate-float-bg bg-radial-[at_var(--bg-pos)_50%] from-(--bg-main) to-(--bg-card)
+        flex flex-col justify-between items-center font-sans text-(--text-main) overflow-hidden transition-colors duration-300 ">
+            <HeaderBlock />
             {players.map((id, index) => (
-                <div key={index} className={id === userId ? "text-[var(--primary)]" : ""}>
-                    {`Player ${index + 1}`}
-                </div>
+                <LobbyPlayerCard
+                    key={id} 
+                    number={index + 1}
+                    isMe={id === userId}
+                />
             ))}
             <div>
                 {gameData.code}
@@ -51,6 +70,7 @@ export const GameLobby = ({ gameData }: { gameData: Game }) => {
                     onClick={startGame}
                 >Start</button>
             }
+            <FooterBlock />
         </div>
     )
 }
