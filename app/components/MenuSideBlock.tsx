@@ -5,7 +5,7 @@ export default function MenuSideBlock() {
   return (
     <div className="w-80 h-screen bg-[var(--bg-sidebar)] backdrop-blur-md border-r border-[var(--border-color)] p-8 flex flex-col overflow-y-auto custom-scrollbar text-[var(--text-muted)] transition-colors duration-300">
       
-      {/* Header Section */}
+      {/* header section */}
       <div className="flex items-center gap-3 mb-8">
         <div className="p-2 bg-[var(--primary)] rounded-lg shadow-lg shadow-blue-500/20">
           <Info size={24} className="text-[var(--text-inverse)]" />
@@ -13,7 +13,7 @@ export default function MenuSideBlock() {
         <h2 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">About</h2>
       </div>
 
-      {/* Description Section */}
+      {/* description section */}
       <div className="mb-10">
         <p className="leading-relaxed mb-4">
           <span className="text-[var(--primary)] font-semibold">Sudoco-op</span> is a
@@ -31,7 +31,7 @@ export default function MenuSideBlock() {
         </div>
       </div>
 
-      {/* Tips Section Header */}
+      {/* tips section header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2 bg-amber-500/10 rounded-lg">
           <BookOpen size={20} className="text-[var(--accent)]" />
@@ -39,7 +39,7 @@ export default function MenuSideBlock() {
         <h3 className="text-xl font-semibold text-[var(--text-main)]">Game tips</h3>
       </div>
 
-      {/* Tips List */}
+      {/* tips List */}
       <ul className="space-y-6 text-sm">
         <li className="flex gap-4 group">
           <p className="leading-snug">
