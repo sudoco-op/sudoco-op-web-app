@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router"
 import { House } from "lucide-react"
 import { api } from "~/api/api"
 import { setUserToken } from "~/auth/auth"
+import FooterBlock from "~/components/FooterBlock"
+import HeaderBlock from "~/components/HeaderBlock"
 
 export const JoinGame: React.FC = () => {
     const [code, setCode] = useState<string[]>(new Array(6).fill(""));
@@ -82,11 +84,7 @@ export const JoinGame: React.FC = () => {
                 bg-linear-to-b from-(--bg-card) to-(--bg-main) 
                 ">
 
-            <div className="w-full h-full py-3 bg-[var(--bg-sidebar)] backdrop-blur-md border-b border-[var(--border-color)]">
-                <Link to="/">
-                    <House className="mx-4" size={36} />
-                </Link>
-            </div>
+            <HeaderBlock/>
 
             <div className="text-center space-y-4 mb-16">
                 <h1 className="text-6xl font-black bg-clip-text text-transparent bg-linear-to-t from-(--text-main) to-(--text-muted) ">
@@ -132,11 +130,8 @@ export const JoinGame: React.FC = () => {
                 </button>
             </div>
 
-            <div className="text-center mb-6">
-                <Link to="/">
-                    <p className="text-xs text-(--text-muted) font-bold ">Create your own coop sudoku rooms at sudocoop.pl</p>
-                </Link>
-            </div>
+            
+            <FooterBlock/>
         </div>
     )
 }

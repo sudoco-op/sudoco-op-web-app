@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "~/api/api";
 import { setUserToken } from "~/auth/auth";
+import FooterBlock from "~/components/FooterBlock";
+import HeaderBlock from "~/components/HeaderBlock";
 
 const DifficultyButton = ({ difName, isActive, onClick }: { difName: string, isActive: boolean, onClick: () => void }) => (
     <button
@@ -30,9 +32,10 @@ export const CreateGame = () => {
     const [activeDifficulty, setActiveDifficulty] = useState<0 | 1 | 2>(1);
     return (
         <div className="min-h-screen w-screen 
-        animate-float-bg bg-radial-[at_var(--bg-pos)_10%] from-(--bg-main) to-(--bg-card)
-        flex flex-col justify-center items-center gap-60 font-sans text-(--text-main) overflow-hidden transition-colors duration-300 ">
-            <div className="flex flex-row justify-between gap-16 bg-(--bg-sidebar) p-10 rounded-2xl border-2 border-(--border-color) shadow-2xl hover:shadow-blue-500/20 transition-colors duration-300">
+        animate-float-bg bg-radial-[at_var(--bg-pos)_30%] from-(--bg-main) to-(--bg-card)
+        flex flex-col justify-between items-center gap-60 font-sans text-(--text-main) overflow-hidden transition-colors duration-300 ">
+            <HeaderBlock/>
+            <div className="flex flex-row justify-between gap-16 bg-(--bg-sidebar) p-10 rounded-2xl border-2 border-(--border-color) shadow-2xl hover:shadow-purple-500/20 transition-colors duration-300">
 
                 <div className="relative flex flex-col border-4 border-[var(--border-color)] rounded-xl bg-black/5 p-1 w-48">
                     {/* slider block */}
@@ -74,6 +77,7 @@ export const CreateGame = () => {
                 
             </div>
 
+            <FooterBlock/>
 
         </div>
     )
