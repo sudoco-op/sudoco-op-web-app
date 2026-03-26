@@ -40,17 +40,17 @@
   /* dark theme */
   :root {
     --bg-main: #020617;
-    --bg-header: #020617;
-    --bg-sidebar: #0f172a;
-    --bg-card: #1e293b;
+    --bg-header: #100217;
+    --bg-sidebar: #2c123a;
+    --bg-card: #301e3b;
 
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
     --text-inverse: #ffffff;
 
-    --primary: #3b82f6;
-    --primary-hover: #2563eb;
-    --accent: #fbbf24;
+    --primary: #953bf6;
+    --primary-hover: #ac25eb;
+    --accent: #dd8e2e;
     --danger: #f87171;
 
     --border-color: #334155;
