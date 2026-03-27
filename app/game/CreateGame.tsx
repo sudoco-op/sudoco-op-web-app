@@ -24,7 +24,7 @@ export const CreateGame = () => {
     const navigate = useNavigate();
 
     const startGame = async () => {
-        const response = await api.createGame();
+        const response = await api.createGame(activeDifficulty);
         setUserToken(response.userJwt);
         navigate(`/game-lobby/${response.game.id}`);
     }
@@ -34,7 +34,7 @@ export const CreateGame = () => {
         <div className="min-h-screen w-screen 
         animate-float-bg bg-radial-[at_var(--bg-pos)_30%] from-(--bg-main) to-(--bg-card)
         flex flex-col justify-between items-center gap-60 font-sans text-(--text-main) overflow-hidden transition-colors duration-300 ">
-            <HeaderBlock/>
+            <HeaderBlock />
             <div className="flex flex-row justify-between gap-16 bg-(--bg-sidebar) p-10 rounded-2xl border-2 border-(--border-color) shadow-2xl hover:shadow-purple-500/20 transition-colors duration-300">
 
                 <div className="relative flex flex-col border-4 border-[var(--border-color)] rounded-xl bg-black/5 p-1 w-48">
@@ -71,13 +71,13 @@ export const CreateGame = () => {
                         {activeDifficulty === 2 && <p className="text-2xl">Hard - 60 fields are empty.<span className="text-(--danger)"> Can you beat it?</span> </p>}
                     </div>
                     <button className="h-14 border-4 border-(--accent)/30  px-14 hover:cursor-pointer bg-(--accent) rounded-lg text-2xl font-bold"
-                    onClick={startGame}
-                >Start</button>
+                        onClick={startGame}
+                    >Start</button>
                 </div>
-                
+
             </div>
 
-            <FooterBlock/>
+            <FooterBlock />
 
         </div>
     )
