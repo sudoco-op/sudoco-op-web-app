@@ -44,13 +44,12 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
         return selectedCellIndex % 9;
     }, [selectedCellIndex]);
 
-    const checkWin = useCallback(() => { if (board.every(bc => bc.isCorrect)) setWin(true); }, [board]);
+    useEffect(() => { if (board.every(bc => bc.isCorrect)) setWin(true); }, [board])
 
     const setNumber = useCallback((index: number, value: Digit, isCorrect: boolean) => {
         if (!isCorrect) setLivesLeft(prev => prev - 1);
-        checkWin();
         setBoard(prevBoard => prevBoard.map((cell, i) => i === index ? { ...cell, cellValue: value, isCorrect: isCorrect } : cell));
-    }, [checkWin]);
+    }, []);
 
     const addNote = useCallback((index: number, value: Digit) => {
         setBoard(prevBoard =>
@@ -110,8 +109,6 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
     }, [board, selectedCellIndex, noteModeActive, toggleNote, setNumber, handleClearNotes, websocketConnection])
 
     useEffect(() => {
-        checkWin();
-
         const handleKeyEvent = (e: KeyboardEvent) => {
 
             const calmpIndex = (index: number) => Math.min(Math.max(index, 0), 80)
@@ -212,7 +209,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                             >
                                 {cell.cellValue !== 0 && cell.cellValue}
                                 {cell.cellValue === 0 &&
-                                    <div className="w-full h-full grid grid-cols-3 text-xs sm:text-sm">
+                                    <div className="w-full h-full grid grid-cols-3 text-[0.5rem] sm:text-sm">
                                         {cell.cellNotes.map((noteValue, noteIndex) => (
                                             <div key={`${index}-${noteIndex}`} className="flex justify-center items-center">
                                                 {noteValue !== 0 && noteValue}
