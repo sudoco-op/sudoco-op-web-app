@@ -1,7 +1,7 @@
-import { Eraser, NotebookPen } from "lucide-react";
+import { Eraser, Heart, NotebookPen } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useOutletContext } from "react-router";
-import { websocketEmits, websocketEvents, type Game } from "~/api/api";
+import { Link, useOutletContext } from "react-router";
+import { websocketEmits, websocketEvents, type BoardCell, type Game } from "~/api/api";
 import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
 
 type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -12,6 +12,8 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
     const [board, setBoard] = useState(initialGame.boardState);
     const [selectedCellIndex, setSelectedCellIndex] = useState<number | null>(null);
     const [noteModeActive, setNoteModeActive] = useState<boolean>(false);
+    const [win, setWin] = useState<boolean>(false);
+    const [livesLeft, setLivesLeft] = useState<number>(initialGame.livesLeft);
 
     const websocketConnection = useOutletContext<WebsocketConnectionContext>();
 
@@ -42,7 +44,10 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
         return selectedCellIndex % 9;
     }, [selectedCellIndex]);
 
+    useEffect(() => { if (board.every(bc => bc.isCorrect)) setWin(true); }, [board])
+
     const setNumber = useCallback((index: number, value: Digit, isCorrect: boolean) => {
+        if (!isCorrect) setLivesLeft(prev => prev - 1);
         setBoard(prevBoard => prevBoard.map((cell, i) => i === index ? { ...cell, cellValue: value, isCorrect: isCorrect } : cell));
     }, []);
 
@@ -162,6 +167,11 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
 
     return (
         <div className="h-screen w-screen bg-(--bg-main) flex flex-col sm:justify-center items-center font-sans text-(--text-main) overflow-x-hidden transition-colors duration-300 px-2 py-4">
+            <div className="p-4 flex gap-3">
+                <Heart size={30} fill={livesLeft > 0 ? "red" : "none"} />
+                <Heart size={30} fill={livesLeft > 1 ? "red" : "none"} />
+                <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
+            </div>
             <div className="w-full flex gap-x-10 gap-y-10 justify-center items-center flex-col md:flex-row">
                 <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-white">
                     {board.map((cell, index) => {
@@ -192,7 +202,8 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                                     flex items-center justify-center
                                     text-xl sm:text-2xl font-light
                                     cursor-pointer border-gray-500
-                                    transition-colors hover:bg-slate-600
+                                    transition-colors 
+                                    ${cell.isCorrect || cell.cellValue === 0 && "hover:bg-slate-600"}
                                     ${thickBorderRight ? "border-r-2 border-r-white" : "border-r border-r-slate-500"} ${thickBorderBottom ? "border-b-2 border-b-white" : "border-b border-b-slate-500"}
                                     ${colIndex === 8 ? 'border-r-0' : ''}
                                     ${rowIndex === 8 ? 'border-b-0' : ''}
@@ -203,7 +214,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                             >
                                 {cell.cellValue !== 0 && cell.cellValue}
                                 {cell.cellValue === 0 &&
-                                    <div className="w-full h-full grid grid-cols-3 text-xs sm:text-sm">
+                                    <div className="w-full h-full grid grid-cols-3 text-[0.5rem] sm:text-sm">
                                         {cell.cellNotes.map((noteValue, noteIndex) => (
                                             <div key={`${index}-${noteIndex}`} className="flex justify-center items-center">
                                                 {noteValue !== 0 && noteValue}
@@ -247,6 +258,17 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                     </div>
                 </div>
             </div>
+
+            {(win || livesLeft == 0) &&
+                <div className="absolute top-0 left-0 w-screen h-screen backdrop-blur-xs flex justify-center items-center">
+                    <div className="max-w-60 w-full h-60 bg-[var(--bg-main)] rounded-lg border-2 border-[var(--border-color)] flex flex-col items-center justify-around">
+                        {win ? <h1 className="font-bold text-2xl">You win</h1> : <h1 className="font-bold text-2xl">You lose</h1>}
+                        <Link to={"/"}>
+                            <button className="p-4 bg-[var(--primary)] rounded-lg hover:cursor-pointer">Main menu</button>
+                        </Link>
+                    </div>
+                </div>
+            }
         </div>
     )
 }
