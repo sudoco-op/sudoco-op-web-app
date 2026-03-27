@@ -47,11 +47,13 @@ export const websocketEvents = {
     ReciveMarkCell: "ReciveMarkCell",
     ReciveStartGame: "ReciveStartGame",
     ReciveAddNote: "ReciveAddNote",
-    ReciveRemoveNote: "ReciveRemoveNote"
+    ReciveRemoveNote: "ReciveRemoveNote",
+    ReciveRemoveAllNotes: "ReciveRemoveAllNotes"
 }
 
 export const websocketEmits = {
     MarkCell: "MarkCell",
     AddNote: "AddNote",
-    RemoveNote: "RemoveNote"
+    RemoveNote: "RemoveNote",
+    RemoveAllNotes: "RemoveAllNotes"
 }

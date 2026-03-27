@@ -25,12 +25,14 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
             });
             websocketConnection.on(websocketEvents.ReciveAddNote, addNote);
             websocketConnection.on(websocketEvents.ReciveRemoveNote, removeNote)
+            websocketConnection.on(websocketEvents.ReciveRemoveAllNotes, clearNotes);
         }
 
         return () => {
             websocketConnection?.off(websocketEvents.ReciveMarkCell);
             websocketConnection?.off(websocketEvents.ReciveAddNote);
             websocketConnection?.off(websocketEvents.ReciveRemoveNote);
+            websocketConnection?.off(websocketEvents.ReciveRemoveAllNotes);
         }
     }, [websocketConnection]);
 
@@ -73,15 +75,14 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
         setBoard(prevBoard => prevBoard.map((cell, i) => i === index ? { ...cell, cellValue: 0 } : cell));
     }, []);
 
-    // TODO: add enpoint for clear all notes
-    // const clearNotes = useCallback((index: number) => {
-    //     setBoard(prevBoard =>
-    //         prevBoard.map((cell, i) => i === index ?
-    //             {
-    //                 ...cell,
-    //                 cellNotes: cell.cellNotes.map(_ => 0)
-    //             } : cell));
-    // }, [])
+    const clearNotes = useCallback((index: number) => {
+        setBoard(prevBoard =>
+            prevBoard.map((cell, i) => i === index ?
+                {
+                    ...cell,
+                    cellNotes: cell.cellNotes.map(_ => 0)
+                } : cell));
+    }, [])
 
     const toggleNote = useCallback((index: number, value: Digit) => {
         if (!websocketConnection || websocketConnection.state !== "Connected") return;
@@ -96,17 +97,12 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
         else websocketConnection.invoke(websocketEmits.MarkCell, selectedCellIndex, value);
     }, [selectedCellIndex, noteModeActive, toggleNote, setNumber, websocketConnection])
 
-    const handleClearNotes = useCallback((index: number) => { // TODO: remove after adding endpoint for clearing notes
-        if (!websocketConnection || websocketConnection.state !== "Connected") return;
-        for (let i of digits) websocketConnection.invoke(websocketEmits.RemoveNote, index, i);
-    }, [websocketConnection])
-
     const handleClear = useCallback(() => {
         if (!websocketConnection || websocketConnection.state !== "Connected") return;
         if (selectedCellIndex === null) return;
-        if (board[selectedCellIndex].cellValue === 0) handleClearNotes(selectedCellIndex); // TODO: add endpoint for clearing cell notes
+        if (board[selectedCellIndex].cellValue === 0) websocketConnection.invoke(websocketEmits.RemoveAllNotes, selectedCellIndex)
         else websocketConnection.invoke(websocketEmits.MarkCell, selectedCellIndex, 0);
-    }, [board, selectedCellIndex, noteModeActive, toggleNote, setNumber, handleClearNotes, websocketConnection])
+    }, [board, selectedCellIndex, noteModeActive, toggleNote, setNumber, websocketConnection])
 
     useEffect(() => {
         const handleKeyEvent = (e: KeyboardEvent) => {
