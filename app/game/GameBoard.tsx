@@ -1,4 +1,4 @@
-import { Eraser, NotebookPen } from "lucide-react";
+import { Eraser, Heart, NotebookPen } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useOutletContext } from "react-router";
 import { websocketEmits, websocketEvents, type BoardCell, type Game } from "~/api/api";
@@ -167,6 +167,11 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
 
     return (
         <div className="h-screen w-screen bg-(--bg-main) flex flex-col sm:justify-center items-center font-sans text-(--text-main) overflow-x-hidden transition-colors duration-300 px-2 py-4">
+            <div className="p-4 flex gap-3">
+                <Heart size={30} fill={livesLeft > 0 ? "red" : "none"} />
+                <Heart size={30} fill={livesLeft > 1 ? "red" : "none"} />
+                <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
+            </div>
             <div className="w-full flex gap-x-10 gap-y-10 justify-center items-center flex-col md:flex-row">
                 <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-white">
                     {board.map((cell, index) => {
