@@ -34,6 +34,11 @@
 
   --border-color: #cbd5e1;
 
+  --thick-board-border: #000000;
+  --game-board-cell-hover: #adb9cb;
+  --game-board-cell-hover-secondary: #bbc8e7;
+  --game-board-cell-error: #e3686b;
+  --game-board-cell-same-number: #a5a588;
 }
 
 @media (prefers-color-scheme: dark) { 
@@ -55,5 +60,10 @@
 
     --border-color: #334155;
 
+    --thick-board-border: #ffffff;
+    --game-board-cell-hover: #45556c;
+    --game-board-cell-hover-secondary: #0f172b;
+    --game-board-cell-error: #82181a;
+    --game-board-cell-same-number: #1d1d16;
   }
 }

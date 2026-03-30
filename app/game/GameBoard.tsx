@@ -181,7 +181,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                 <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
             </div>
             <div className="w-full flex gap-x-10 gap-y-10 justify-center items-center flex-col md:flex-row">
-                <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-white">
+                <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-[var(--thick-board-border)]">
                     {board.map((cell, index) => {
                         const rowIndex = Math.floor(index / 9);
                         const colIndex = index % 9;
@@ -202,17 +202,17 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                             <div
                                 key={index}
                                 className={`
-                                    ${!cell.isCorrect && cell.cellValue !== 0 && "bg-red-900"}
-                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex === index && "bg-slate-600"}
-                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && !sameNumber && highlight && "bg-slate-900"}
-                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && sameNumber && "bg-olive-900"}
+                                    ${!cell.isCorrect && cell.cellValue !== 0 && "bg-[var(--game-board-cell-error)]"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex === index && "bg-[var(--game-board-cell-hover)]"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && !sameNumber && highlight && "bg-[var(--game-board-cell-hover-secondary)]"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && sameNumber && "bg-[var(--game-board-cell-same-number)]"}
                                     aspect-square
                                     flex items-center justify-center
                                     text-xl sm:text-2xl font-light
                                     cursor-pointer border-gray-500
                                     transition-colors 
-                                    ${cell.isCorrect || cell.cellValue === 0 && "hover:bg-slate-600"}
-                                    ${thickBorderRight ? "border-r-2 border-r-white" : "border-r border-r-slate-500"} ${thickBorderBottom ? "border-b-2 border-b-white" : "border-b border-b-slate-500"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && "hover:bg-[var(--game-board-cell-hover)]"}
+                                    ${thickBorderRight ? "border-r-2 border-r-[var(--thick-board-border)]" : "border-r border-r-slate-500"} ${thickBorderBottom ? "border-b-2 border-b-[var(--thick-board-border)]" : "border-b border-b-slate-500"}
                                     ${colIndex === 8 ? 'border-r-0' : ''}
                                     ${rowIndex === 8 ? 'border-b-0' : ''}
                                 `}
@@ -238,7 +238,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                 <div className="flex flex-col gap-6">
                     <div className="grid grid-cols-9 md:grid-cols-3 gap-3">
                         {digits.map(value => (
-                            <button key={value} className="sm:w-15 text-2xl bg-slate-900 sm:rounded-lg rounded-xl flex justify-center items-center aspect-square hover:cursor-pointer p-2 transition-colors hover:text-(--primary-hover)"
+                            <button key={value} className="sm:w-15 text-2xl bg-[var(--game-board-cell-hover-secondary)] sm:rounded-lg rounded-xl flex justify-center items-center aspect-square hover:cursor-pointer p-2 transition-colors hover:text-(--primary-hover)"
                                 onClick={() => handleInput(value)}
                             >
                                 {value}
@@ -247,14 +247,14 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                     </div>
 
                     <div className="flex justify-center items-center gap-5">
-                        <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-slate-900 gap-3 hover:text-(--primary-hover)"
+                        <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-[var(--game-board-cell-hover-secondary)] gap-3 hover:text-(--primary-hover)"
                             onClick={() => handleClear()}
                         >
                             <Eraser />
                             Usuń
                         </button>
 
-                        <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-slate-900 relative gap-3 hover:text-(--primary-hover)"
+                        <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-[var(--game-board-cell-hover-secondary)] relative gap-3 hover:text-(--primary-hover)"
                             onClick={() => setNoteModeActive(prev => !prev)}
                         >
                             <NotebookPen />
