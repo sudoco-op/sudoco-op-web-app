@@ -1,7 +1,7 @@
 import { Eraser, Heart, NotebookPen } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useOutletContext } from "react-router";
-import { websocketEmits, websocketEvents, type BoardCell, type Game } from "~/api/api";
+import { api, websocketEmits, websocketEvents, type Game } from "~/api/api";
 import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
 
 type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -26,6 +26,10 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
             websocketConnection.on(websocketEvents.ReciveAddNote, addNote);
             websocketConnection.on(websocketEvents.ReciveRemoveNote, removeNote)
             websocketConnection.on(websocketEvents.ReciveRemoveAllNotes, clearNotes);
+            websocketConnection.on(websocketEvents.ReciveStartGame, async () => {
+                const newGame = await api.getGameData(initialGame.id);
+                restartGame(newGame);
+            });
         }
 
         return () => {
@@ -35,6 +39,14 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
             websocketConnection?.off(websocketEvents.ReciveRemoveAllNotes);
         }
     }, [websocketConnection]);
+
+    const restartGame = useCallback((newGame: Game) => {
+        setBoard(newGame.boardState);
+        setSelectedCellIndex(null);
+        setNoteModeActive(false);
+        setWin(false);
+        setLivesLeft(newGame.livesLeft);
+    }, []);
 
     const selectedCellIndexRow = useMemo(() => {
         if (selectedCellIndex == null) return null;
