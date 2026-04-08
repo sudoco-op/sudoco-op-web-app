@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useOutletContext } from "react-router";
 import { api, websocketEmits, websocketEvents, type Game } from "~/api/api";
 import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
+import { getUserId } from "~/auth/auth";
 
 type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
@@ -14,6 +15,9 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
     const [noteModeActive, setNoteModeActive] = useState<boolean>(false);
     const [win, setWin] = useState<boolean>(false);
     const [livesLeft, setLivesLeft] = useState<number>(initialGame.livesLeft);
+
+    const userId = useMemo(() => getUserId(), []);
+    const isHost = useMemo(() => userId === initialGame.playerIds[0], [initialGame, userId]);
 
     const websocketConnection = useOutletContext<WebsocketConnectionContext>();
 
@@ -269,8 +273,15 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
 
             {(win || livesLeft == 0) &&
                 <div className="absolute top-0 left-0 w-screen h-screen backdrop-blur-xs flex justify-center items-center">
-                    <div className="max-w-60 w-full h-60 bg-[var(--bg-main)] rounded-lg border-2 border-[var(--border-color)] flex flex-col items-center justify-around">
+                    <div className="max-w-60 w-full h-80 bg-[var(--bg-main)] rounded-lg border-2 border-[var(--border-color)] flex flex-col items-center justify-around">
                         {win ? <h1 className="font-bold text-2xl">You win</h1> : <h1 className="font-bold text-2xl">You lose</h1>}
+                        {isHost &&
+                            <button onClick={async () => {
+                                await api.startGame(initialGame.id);
+                                var gameData = await api.getGameData(initialGame.id);
+                                restartGame(gameData);
+                            }} className="p-4 bg-[var(--primary)] rounded-lg hover:cursor-pointer">Restart game</button>
+                        }
                         <Link to={"/"}>
                             <button className="p-4 bg-[var(--primary)] rounded-lg hover:cursor-pointer">Main menu</button>
                         </Link>
