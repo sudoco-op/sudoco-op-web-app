@@ -22,11 +22,20 @@ const DifficultyButton = ({ difName, isActive, onClick }: { difName: string, isA
 
 export const CreateGame = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const startGame = async () => {
-        const response = await api.createGame(activeDifficulty);
-        setUserToken(response.userJwt);
-        navigate(`/game-lobby/${response.game.id}`);
+        if (loading) return;
+        setLoading(true);
+        try {
+            const response = await api.createGame(activeDifficulty);
+            setUserToken(response.userJwt);
+            navigate(`/game-lobby/${response.game.id}`);
+        } catch (e) {
+            alert("Error when creating game");
+        } finally {
+            setLoading(false);
+        }
     }
 
     const [activeDifficulty, setActiveDifficulty] = useState<0 | 1 | 2>(1);
@@ -70,7 +79,7 @@ export const CreateGame = () => {
                         {activeDifficulty === 1 && <p className="text-2xl">Medium - 50 fields are empty. Optimal for the chill sudoku solving</p>}
                         {activeDifficulty === 2 && <p className="text-2xl">Hard - 60 fields are empty.<span className="text-(--danger)"> Can you beat it?</span> </p>}
                     </div>
-                    <button className="h-14 border-4 border-(--accent)/30  px-14 hover:cursor-pointer bg-(--accent) rounded-lg text-2xl font-bold"
+                    <button disabled={loading} className="h-14 border-4 border-(--accent)/30  px-14 hover:cursor-pointer bg-(--accent) rounded-lg text-2xl font-bold disabled:opacity-50"
                         onClick={startGame}
                     >Start</button>
                 </div>

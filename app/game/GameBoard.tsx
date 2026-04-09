@@ -126,22 +126,22 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
 
             const calmpIndex = (index: number) => Math.min(Math.max(index, 0), 80)
 
-            if (e.key === "ArrowLeft") {
+            if (e.key === "ArrowLeft" || e.key === "a") {
                 setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev - 1) : 40);
                 return;
             }
 
-            if (e.key === "ArrowRight") {
+            if (e.key === "ArrowRight" || e.key === "d") {
                 setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev + 1) : 40);
                 return;
             }
 
-            if (e.key === "ArrowUp") {
+            if (e.key === "ArrowUp" || e.key === "w") {
                 setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev - 9) : 40);
                 return;
             }
 
-            if (e.key === "ArrowDown") {
+            if (e.key === "ArrowDown" || e.key === "s") {
                 setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev + 9) : 40);
                 return;
             }
@@ -179,7 +179,12 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
     }, [handleClear, handleInput]);
 
     return (
-        <div className="h-screen w-screen bg-(--bg-main) flex flex-col font-sans text-(--text-main) overflow-x-hidden transition-colors duration-300">
+        <div className="
+                min-h-screen w-screen
+                animate-float-bg bg-radial-[at_var(--bg-pos)_50%] from-(--bg-main) to-(--bg-card)
+                flex flex-col font-sans text-(--text-main) overflow-x-hidden transition-colors duration-300
+            ">
+            <HeaderBlock confirmExit />
             <div className="my-auto px-2 py-4">
                 <div className="p-4 flex justify-center gap-3">
                     <Heart size={30} fill={livesLeft > 0 ? "red" : "none"} />
