@@ -35,7 +35,7 @@
   --border-color: #cbd5e1;
 
   --thick-board-border: #000000;
-  --game-board-cell-hover: #adb9cb;
+  --game-board-cell-hover: #7287a6;
   --game-board-cell-hover-secondary: #bbc8e7;
   --game-board-cell-error: #e3686b;
   --game-board-cell-same-number: #a5a588;
@@ -64,6 +64,6 @@
     --game-board-cell-hover: #45556c;
     --game-board-cell-hover-secondary: #0f172b;
     --game-board-cell-error: #82181a;
-    --game-board-cell-same-number: #1d1d16;
+    --game-board-cell-same-number: #454534;
   }
 }

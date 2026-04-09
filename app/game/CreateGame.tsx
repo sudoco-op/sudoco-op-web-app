@@ -76,7 +76,7 @@ export const CreateGame = () => {
                 <div className="flex flex-col justify-between">
                     <div className="w-xl">
                         {activeDifficulty === 0 && <p className="text-2xl">Easy - only 20 fields are empty. Best option for the new player</p>}
-                        {activeDifficulty === 1 && <p className="text-2xl">Medium - 50 fields are empty. Optimal for the chill sudoku solving</p>}
+                        {activeDifficulty === 1 && <p className="text-2xl">Medium - 40 fields are empty. Optimal for the chill sudoku solving</p>}
                         {activeDifficulty === 2 && <p className="text-2xl">Hard - 60 fields are empty.<span className="text-(--danger)"> Can you beat it?</span> </p>}
                     </div>
                     <button disabled={loading} className="h-14 border-4 border-(--accent)/30  px-14 hover:cursor-pointer bg-(--accent) rounded-lg text-2xl font-bold disabled:opacity-50"
