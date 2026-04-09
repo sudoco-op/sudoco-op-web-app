@@ -11,9 +11,9 @@ export function Menu() {
     flex font-sans text-(--text-main) overflow-hidden transition-colors duration-300 ">
       {/* SideBlock component */}
       <MenuSideBlock />
-      
+
       <main className="flex-1 flex flex-col items-center justify-center relative">
-        
+
         <div className="text-center space-y-4 mb-16">
           <h1 className="text-8xl font-black bg-clip-text text-transparent bg-linear-to-b from-(--text-main) to-(--text-muted) ">
             SUDOCO-OP
