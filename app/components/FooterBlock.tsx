@@ -1,26 +1,19 @@
 import React from 'react'
-import { Link, useNavigate, useLocation } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 
-export default function FooterBlock() {
-
+export default function FooterBlock({ confirmExit = false }: { confirmExit?: boolean }) {
     const navigate = useNavigate();
-    const location = useLocation();
 
     const handleHomeClick = (e: React.MouseEvent) => {
-        // check if user in the "lobby"
-        const isInLobby = location.pathname.startsWith('/game-lobby/');
-
-        if (isInLobby) {
+        if (confirmExit) { //checks if user needs to confirm exit
             e.preventDefault();
-
-            const confirmExit = window.confirm("You are in the game lobby. Are you sure you want to leave?");
-
-            if (confirmExit) {
+            const confirmed = window.confirm("You are in the game lobby. Are you sure you want to leave?");
+            if (confirmed) {
                 navigate("/");
             }
         }
-
     };
+
     return (
         <div className=" text-center mb-6" >
             <Link to="/" onClick={handleHomeClick}>

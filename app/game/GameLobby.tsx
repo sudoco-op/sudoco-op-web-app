@@ -54,10 +54,10 @@ export const GameLobby = ({ gameData }: { gameData: Game }) => {
         min-h-screen w-screen        
         animate-float-bg bg-radial-[at_var(--bg-pos)_50%] from-(--bg-main) to-(--bg-card)
         flex flex-col justify-between items-center font-sans text-(--text-main) overflow-hidden transition-colors duration-300 ">
-            <HeaderBlock />
+            <HeaderBlock confirmExit={true}></HeaderBlock>
             {players.map((id, index) => (
                 <LobbyPlayerCard
-                    key={id} 
+                    key={id}
                     number={index + 1}
                     isMe={id === userId}
                 />
@@ -70,7 +70,8 @@ export const GameLobby = ({ gameData }: { gameData: Game }) => {
                     onClick={startGame}
                 >Start</button>
             }
-            <FooterBlock />
+            <FooterBlock confirmExit={true}></FooterBlock>
+
         </div>
     )
 }
