@@ -9,6 +9,7 @@ export type BoardCell = {
 export type Game = {
     id: string;
     code: string;
+    livesLeft: number;
     playerIds: string[];
     boardState: BoardCell[];
 }
@@ -23,8 +24,8 @@ export type JoinGameResponse = CreateGameResponse;
 export const API_URL = import.meta.env.VITE_API_URL;
 
 export const api = {
-    createGame: async (): Promise<CreateGameResponse> => {
-        const response = await axios.post(`${API_URL}/GamesControler/create`);
+    createGame: async (difficulty: number): Promise<CreateGameResponse> => {
+        const response = await axios.post(`${API_URL}/GamesControler/create?difficulty=${difficulty}`);
         return response.data;
     },
     joinGame: async (gameCode: string): Promise<JoinGameResponse> => {
@@ -46,11 +47,13 @@ export const websocketEvents = {
     ReciveMarkCell: "ReciveMarkCell",
     ReciveStartGame: "ReciveStartGame",
     ReciveAddNote: "ReciveAddNote",
-    ReciveRemoveNote: "ReciveRemoveNote"
+    ReciveRemoveNote: "ReciveRemoveNote",
+    ReciveRemoveAllNotes: "ReciveRemoveAllNotes"
 }
 
 export const websocketEmits = {
     MarkCell: "MarkCell",
     AddNote: "AddNote",
-    RemoveNote: "RemoveNote"
+    RemoveNote: "RemoveNote",
+    RemoveAllNotes: "RemoveAllNotes"
 }

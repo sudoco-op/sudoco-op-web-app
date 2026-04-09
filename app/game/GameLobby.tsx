@@ -18,14 +18,14 @@ export const GameLobby = ({ gameData }: { gameData: Game }) => {
     const websocketConnection = useOutletContext<WebsocketConnectionContext>();
 
     useEffect(() => {
+        if (gameData.boardState.length != 0) navigation(`/game-board/${gameData.id}`);
+
         if (websocketConnection) {
             websocketConnection.on(websocketEvents.ReciveNewPlayerJoined, (newPlayerId: string) => {
-                console.log("player join")
                 setPlayers(prev => [...prev, newPlayerId]);
             })
 
             websocketConnection.on(websocketEvents.ReciveStartGame, () => {
-                console.log("start game");
                 navigation(`/game-board/${gameData.id}`);
             })
         }
