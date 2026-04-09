@@ -4,6 +4,7 @@ import { Link, useOutletContext } from "react-router";
 import { api, websocketEmits, websocketEvents, type Game } from "~/api/api";
 import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
 import { getUserId } from "~/auth/auth";
+import HeaderBlock from "~/components/HeaderBlock";
 
 type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
@@ -178,34 +179,35 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
     }, [handleClear, handleInput]);
 
     return (
-        <div className="h-screen w-screen bg-(--bg-main) flex flex-col sm:justify-center items-center font-sans text-(--text-main) overflow-x-hidden transition-colors duration-300 px-2 py-4">
-            <div className="p-4 flex gap-3">
-                <Heart size={30} fill={livesLeft > 0 ? "red" : "none"} />
-                <Heart size={30} fill={livesLeft > 1 ? "red" : "none"} />
-                <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
-            </div>
-            <div className="w-full flex gap-x-10 gap-y-10 justify-center items-center flex-col md:flex-row">
-                <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-[var(--thick-board-border)]">
-                    {board.map((cell, index) => {
-                        const rowIndex = Math.floor(index / 9);
-                        const colIndex = index % 9;
+        <div className="h-screen w-screen bg-(--bg-main) flex flex-col font-sans text-(--text-main) overflow-x-hidden transition-colors duration-300">
+            <div className="my-auto px-2 py-4">
+                <div className="p-4 flex justify-center gap-3">
+                    <Heart size={30} fill={livesLeft > 0 ? "red" : "none"} />
+                    <Heart size={30} fill={livesLeft > 1 ? "red" : "none"} />
+                    <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
+                </div>
+                <div className="w-full flex gap-x-10 gap-y-10 justify-center items-center flex-col md:flex-row">
+                    <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-[var(--thick-board-border)]">
+                        {board.map((cell, index) => {
+                            const rowIndex = Math.floor(index / 9);
+                            const colIndex = index % 9;
 
-                        let sameQuadrant;
-                        if (selectedCellIndexCol === null || selectedCellIndexRow === null) sameQuadrant = null;
-                        else sameQuadrant = Math.floor(selectedCellIndexCol / 3) == Math.floor(colIndex / 3) && Math.floor(selectedCellIndexRow / 3) === Math.floor(rowIndex / 3);
-                        const highlight = selectedCellIndexRow === rowIndex || selectedCellIndexCol === colIndex || sameQuadrant;
+                            let sameQuadrant;
+                            if (selectedCellIndexCol === null || selectedCellIndexRow === null) sameQuadrant = null;
+                            else sameQuadrant = Math.floor(selectedCellIndexCol / 3) == Math.floor(colIndex / 3) && Math.floor(selectedCellIndexRow / 3) === Math.floor(rowIndex / 3);
+                            const highlight = selectedCellIndexRow === rowIndex || selectedCellIndexCol === colIndex || sameQuadrant;
 
-                        let sameNumber;
-                        if (cell.cellValue === 0 || selectedCellIndex === null) sameNumber = null;
-                        else sameNumber = board[selectedCellIndex].cellValue === cell.cellValue;
+                            let sameNumber;
+                            if (cell.cellValue === 0 || selectedCellIndex === null) sameNumber = null;
+                            else sameNumber = board[selectedCellIndex].cellValue === cell.cellValue;
 
-                        const thickBorderRight = (colIndex + 1) % 3 === 0 && colIndex !== 8;
-                        const thickBorderBottom = (rowIndex + 1) % 3 === 0 && rowIndex !== 8;
+                            const thickBorderRight = (colIndex + 1) % 3 === 0 && colIndex !== 8;
+                            const thickBorderBottom = (rowIndex + 1) % 3 === 0 && rowIndex !== 8;
 
-                        return (
-                            <div
-                                key={index}
-                                className={`
+                            return (
+                                <div
+                                    key={index}
+                                    className={`
                                     ${!cell.isCorrect && cell.cellValue !== 0 && "bg-[var(--game-board-cell-error)]"}
                                     ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex === index && "bg-[var(--game-board-cell-hover)]"}
                                     ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && !sameNumber && highlight && "bg-[var(--game-board-cell-hover-secondary)]"}
@@ -220,74 +222,75 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                                     ${colIndex === 8 ? 'border-r-0' : ''}
                                     ${rowIndex === 8 ? 'border-b-0' : ''}
                                 `}
-                                onClick={() => {
-                                    setSelectedCellIndex(index);
-                                }}
-                            >
-                                {cell.cellValue !== 0 && cell.cellValue}
-                                {cell.cellValue === 0 &&
-                                    <div className="w-full h-full grid grid-cols-3 text-[0.5rem] sm:text-sm">
-                                        {cell.cellNotes.map((noteValue, noteIndex) => (
-                                            <div key={`${index}-${noteIndex}`} className="flex justify-center items-center">
-                                                {noteValue !== 0 && noteValue}
-                                            </div>
-                                        ))}
-                                    </div>
-                                }
-                            </div>
-                        );
-                    })}
-                </div>
+                                    onClick={() => {
+                                        setSelectedCellIndex(index);
+                                    }}
+                                >
+                                    {cell.cellValue !== 0 && cell.cellValue}
+                                    {cell.cellValue === 0 &&
+                                        <div className="w-full h-full grid grid-cols-3 text-[0.5rem] sm:text-sm">
+                                            {cell.cellNotes.map((noteValue, noteIndex) => (
+                                                <div key={`${index}-${noteIndex}`} className="flex justify-center items-center">
+                                                    {noteValue !== 0 && noteValue}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    }
+                                </div>
+                            );
+                        })}
+                    </div>
 
-                <div className="flex flex-col gap-6">
-                    <div className="grid grid-cols-9 md:grid-cols-3 gap-3">
-                        {digits.map(value => (
-                            <button key={value} className="sm:w-15 text-2xl bg-[var(--game-board-cell-hover-secondary)] sm:rounded-lg rounded-xl flex justify-center items-center aspect-square hover:cursor-pointer p-2 transition-colors hover:text-(--primary-hover)"
-                                onClick={() => handleInput(value)}
+                    <div className="flex flex-col gap-6">
+                        <div className="grid grid-cols-9 md:grid-cols-3 gap-3">
+                            {digits.map(value => (
+                                <button key={value} className="sm:w-15 text-2xl bg-[var(--game-board-cell-hover-secondary)] sm:rounded-lg rounded-xl flex justify-center items-center aspect-square hover:cursor-pointer p-2 transition-colors hover:text-(--primary-hover)"
+                                    onClick={() => handleInput(value)}
+                                >
+                                    {value}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="flex justify-center items-center gap-5">
+                            <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-[var(--game-board-cell-hover-secondary)] gap-3 hover:text-(--primary-hover)"
+                                onClick={() => handleClear()}
                             >
-                                {value}
+                                <Eraser />
+                                Usuń
                             </button>
-                        ))}
-                    </div>
 
-                    <div className="flex justify-center items-center gap-5">
-                        <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-[var(--game-board-cell-hover-secondary)] gap-3 hover:text-(--primary-hover)"
-                            onClick={() => handleClear()}
-                        >
-                            <Eraser />
-                            Usuń
-                        </button>
-
-                        <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-[var(--game-board-cell-hover-secondary)] relative gap-3 hover:text-(--primary-hover)"
-                            onClick={() => setNoteModeActive(prev => !prev)}
-                        >
-                            <NotebookPen />
-                            <div className={`text-white absolute right-1 top-7 text-xs p-1 rounded-lg ${noteModeActive ? "bg-(--primary)" : "bg-slate-800"}`}>
-                                {noteModeActive ? "ON" : "OFF"}
-                            </div>
-                            Notatki
-                        </button>
+                            <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-[var(--game-board-cell-hover-secondary)] relative gap-3 hover:text-(--primary-hover)"
+                                onClick={() => setNoteModeActive(prev => !prev)}
+                            >
+                                <NotebookPen />
+                                <div className={`text-white absolute right-1 top-7 text-xs p-1 rounded-lg ${noteModeActive ? "bg-(--primary)" : "bg-slate-800"}`}>
+                                    {noteModeActive ? "ON" : "OFF"}
+                                </div>
+                                Notatki
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                {(win || livesLeft == 0) &&
+                    <div className="absolute top-0 left-0 w-screen h-screen backdrop-blur-xs flex justify-center items-center">
+                        <div className="max-w-60 w-full h-80 bg-[var(--bg-main)] rounded-lg border-2 border-[var(--border-color)] flex flex-col items-center justify-around">
+                            {win ? <h1 className="font-bold text-2xl">You win</h1> : <h1 className="font-bold text-2xl">You lose</h1>}
+                            {isHost &&
+                                <button onClick={async () => {
+                                    await api.startGame(initialGame.id);
+                                    var gameData = await api.getGameData(initialGame.id);
+                                    restartGame(gameData);
+                                }} className="p-4 bg-[var(--primary)] rounded-lg hover:cursor-pointer">Restart game</button>
+                            }
+                            <Link to={"/"}>
+                                <button className="p-4 bg-[var(--primary)] rounded-lg hover:cursor-pointer">Main menu</button>
+                            </Link>
+                        </div>
+                    </div>
+                }
             </div>
-
-            {(win || livesLeft == 0) &&
-                <div className="absolute top-0 left-0 w-screen h-screen backdrop-blur-xs flex justify-center items-center">
-                    <div className="max-w-60 w-full h-80 bg-[var(--bg-main)] rounded-lg border-2 border-[var(--border-color)] flex flex-col items-center justify-around">
-                        {win ? <h1 className="font-bold text-2xl">You win</h1> : <h1 className="font-bold text-2xl">You lose</h1>}
-                        {isHost &&
-                            <button onClick={async () => {
-                                await api.startGame(initialGame.id);
-                                var gameData = await api.getGameData(initialGame.id);
-                                restartGame(gameData);
-                            }} className="p-4 bg-[var(--primary)] rounded-lg hover:cursor-pointer">Restart game</button>
-                        }
-                        <Link to={"/"}>
-                            <button className="p-4 bg-[var(--primary)] rounded-lg hover:cursor-pointer">Main menu</button>
-                        </Link>
-                    </div>
-                </div>
-            }
         </div>
     )
 }
