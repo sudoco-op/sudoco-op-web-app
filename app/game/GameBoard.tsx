@@ -126,22 +126,22 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
 
             const calmpIndex = (index: number) => Math.min(Math.max(index, 0), 80)
 
-            if (e.key === "ArrowLeft") {
+            if (e.key === "ArrowLeft" || e.key === "a") {
                 setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev - 1) : 40);
                 return;
             }
 
-            if (e.key === "ArrowRight") {
+            if (e.key === "ArrowRight" || e.key === "d") {
                 setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev + 1) : 40);
                 return;
             }
 
-            if (e.key === "ArrowUp") {
+            if (e.key === "ArrowUp" || e.key === "w") {
                 setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev - 9) : 40);
                 return;
             }
 
-            if (e.key === "ArrowDown") {
+            if (e.key === "ArrowDown" || e.key === "s") {
                 setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev + 9) : 40);
                 return;
             }

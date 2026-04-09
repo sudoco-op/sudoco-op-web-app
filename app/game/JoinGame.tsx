@@ -9,17 +9,21 @@ import HeaderBlock from "~/components/HeaderBlock"
 export const JoinGame: React.FC = () => {
     const [code, setCode] = useState<string[]>(new Array(6).fill(""));
     const inputsRef = useRef<HTMLInputElement[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
     const joinGame = async () => {
-
+        if (loading) return;
+        setLoading(true);
         try {
             const response = await api.joinGame(code.join(""))
             setUserToken(response.userJwt);
             navigate(`/game-lobby/${response.game.id}`);
         } catch (e) {
             alert("No game with "+code.join("")+" found")
+        } finally {
+            setLoading(false);
         }
 
     }
@@ -123,7 +127,7 @@ export const JoinGame: React.FC = () => {
                     className="h-12 w-full px-2 bg-(--bg-card) border border-(--bg-card) 
                      text-(--text-main) transition-all duration-300 rounded-sm 
                      active:scale-[0.98] shadow-sm disabled:opacity-50"
-                    disabled={code.join("").length < 6}
+                    disabled={code.join("").length < 6 || loading}
                     onClick={joinGame}
                 >
                     <span className="text-xl font-bold">Enter</span>
