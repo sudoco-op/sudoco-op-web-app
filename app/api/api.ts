@@ -12,6 +12,7 @@ export type Game = {
     livesLeft: number;
     playerIds: string[];
     boardState: BoardCell[];
+    startTime: number;
 }
 
 export type CreateGameResponse = {
