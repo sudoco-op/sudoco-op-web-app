@@ -41,7 +41,7 @@ export const CreateGame = () => {
     const [activeDifficulty, setActiveDifficulty] = useState<0 | 1 | 2>(1);
     return (
         <div className="min-h-screen w-screen 
-        animate-float-bg bg-radial-[at(--bg-pos)_30% from-(--bg-main) to-(--bg-card)
+        animate-float-bg bg-radial-[at_var(--bg-pos)_30%] from-(--bg-main) to-(--bg-card)
         flex flex-col justify-between items-center font-sans text-(--text-main) overflow-hidden transition-colors duration-300">
             <HeaderBlock />
             <div className="flex flex-row justify-between gap-16 flex-wrap bg-(--bg-sidebar) p-10 rounded-2xl border-2 border-(--border-color) shadow-2xl hover:shadow-purple-500/20 transition-colors duration-300 mx-4">
