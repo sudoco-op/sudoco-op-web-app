@@ -5,13 +5,21 @@ import { api, websocketEmits, websocketEvents, type Game } from "~/api/api";
 import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
 import { getUserId } from "~/auth/auth";
 import HeaderBlock from "~/components/HeaderBlock";
-import GameStopwatch from "~/components/GameTimer";
+
+import GameTimer  from "~/components/GameTimer";
 import LobbyCodeBlock from "~/components/LobbyCodeBlock";
 
 
 type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 const digits: Digit[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+const renderElapsedTime = (startTime: number, endTime: number) => {
+    const totalSeconds = Math.floor((endTime - startTime) / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
 
 export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
     const [board, setBoard] = useState(initialGame.boardState);
@@ -21,6 +29,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
     const [livesLeft, setLivesLeft] = useState<number>(initialGame.livesLeft);
     const [startTime, setStartTime] = useState<number>(initialGame.startTime);
     const [gameCode, setGameCode] = useState<string>(initialGame.code);
+    const [endTime, setEndTime] = useState<number | null>(null);
 
     const userId = useMemo(() => getUserId(), []);
     const isHost = useMemo(() => userId === initialGame.playerIds[0], [initialGame, userId]);
@@ -58,7 +67,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
         setWin(false);
         setLivesLeft(newGame.livesLeft);
         setStartTime(newGame.startTime);
-
+        setEndTime(null);
     }, []);
 
     const selectedCellIndexRow = useMemo(() => {
@@ -72,6 +81,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
     }, [selectedCellIndex]);
 
     useEffect(() => { if (board.every(bc => bc.isCorrect)) setWin(true); }, [board])
+    useEffect(() => { if (win) setEndTime(Date.now()) }, [win])
 
     const setNumber = useCallback((index: number, value: Digit, isCorrect: boolean) => {
         if (!isCorrect) setLivesLeft(prev => prev - 1);
@@ -202,7 +212,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                                 <Heart size={30} fill={livesLeft > 1 ? "red" : "none"} />
                                 <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
                             </div>
-                            <GameStopwatch startTime={startTime} />
+                            <GameTimer startTime={startTime} stop={win || livesLeft <= 0} />
                         </div>
                         <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-[var(--thick-board-border)]">
                             {board.map((cell, index) => {
@@ -302,6 +312,9 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                         <div className="max-w-60 w-full h-80 bg-[var(--bg-main)] rounded-lg border-2 border-[var(--border-color)] flex flex-col items-center justify-around">
                             <div className="font-bold text-5xl">
                                 {win ? <h1 className="text-green-800 dark:text-green-400">You win</h1> : <h1 className="text-red-800 dark:text-red-400">You lose</h1>}
+                            </div>
+                            <div className="text-xl">
+                                {endTime != null && <h1>{renderElapsedTime(startTime, endTime)}</h1>}
                             </div>
                             {isHost &&
                                 <button onClick={async () => {
