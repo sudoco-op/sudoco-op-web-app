@@ -80,6 +80,11 @@ export const JoinGame: React.FC = () => {
                 setCode(newCode);
             }
         }
+         if (e.key === "Enter") {
+            if (code.join("").length == 6) {
+                joinGame()
+            }
+        }
     };
 
     return (
