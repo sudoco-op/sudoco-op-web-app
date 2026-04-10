@@ -3,11 +3,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getUserId } from "~/auth/auth";
 import { useNavigate, useOutletContext } from "react-router";
 import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
-import { Copy } from "lucide-react"
 
 import FooterBlock from "~/components/FooterBlock";
 import HeaderBlock from "~/components/HeaderBlock";
 import LobbyPlayerCard from "~/components/LobbyPlayerCard";
+import LobbyCodeBlock from "~/components/LobbyCodeBlock";
 
 export const GameLobby = ({ gameData }: { gameData: Game }) => {
     const navigation = useNavigate();
@@ -16,7 +16,6 @@ export const GameLobby = ({ gameData }: { gameData: Game }) => {
     const userId = useMemo(() => getUserId(), []);
     const isHost = useMemo(() => userId === gameData.playerIds[0], [gameData, userId]);
 
-    const [copied, setCopied] = useState(false);
 
     const websocketConnection = useOutletContext<WebsocketConnectionContext>();
 
@@ -39,16 +38,7 @@ export const GameLobby = ({ gameData }: { gameData: Game }) => {
         }
     }, [websocketConnection, gameData])
 
-    const handleCopy = async () => {
-        try {
-            await navigator.clipboard.writeText(gameData.code);
-            setCopied(true);
 
-            setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
-            console.error('Failed to copy: ', err);
-        }
-    };
 
     const startGame = useCallback(async () => {
         await api.startGame(gameData.id);
@@ -82,15 +72,8 @@ export const GameLobby = ({ gameData }: { gameData: Game }) => {
                 ))}
             </div>
 
-            <div className="
-            h-auto w-auto
-            bg-(--accent)
-            flex flex-row justify-center p-3 rounded-2xl text-2xl font-bold items-center gap-5 flex-nowrap cursor-pointer 
-            hover:scale-120 transition-transform"
-                onClick={handleCopy}>
-                <div>{copied ? "Copied!" : gameData.code}</div>
-                <div><Copy size={30} /></div>
-            </div>
+            <LobbyCodeBlock code={gameData.code}></LobbyCodeBlock>
+
             {isHost &&
                 <button className=" border-4 border-(--border-color) py-5 px-14 font-bold text-2xl hover:cursor-pointer bg-(--primary) hover:bg-(--primary-hover) rounded-lg"
                     onClick={startGame}

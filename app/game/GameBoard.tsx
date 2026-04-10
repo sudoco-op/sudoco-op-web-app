@@ -6,6 +6,7 @@ import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
 import { getUserId } from "~/auth/auth";
 import HeaderBlock from "~/components/HeaderBlock";
 import GameStopwatch from "~/components/GameTimer";
+import LobbyCodeBlock from "~/components/LobbyCodeBlock";
 
 
 type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -19,6 +20,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
     const [win, setWin] = useState<boolean>(false);
     const [livesLeft, setLivesLeft] = useState<number>(initialGame.livesLeft);
     const [startTime, setStartTime] = useState<number>(initialGame.startTime);
+    const [gameCode, setGameCode] = useState<string>(initialGame.code);
 
     const userId = useMemo(() => getUserId(), []);
     const isHost = useMemo(() => userId === initialGame.playerIds[0], [initialGame, userId]);
@@ -286,6 +288,11 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                                 </div>
                                 Notatki
                             </button>
+                        </div>
+                        <div className="flex flex-col text-center">
+                            <p className="text-xl font-bold">Lobby Code:</p>
+
+                            <LobbyCodeBlock code={gameCode}></LobbyCodeBlock>
                         </div>
                     </div>
                 </div>
