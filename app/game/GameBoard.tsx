@@ -293,7 +293,9 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                 {(win || livesLeft == 0) &&
                     <div className="absolute top-0 left-0 w-screen h-screen backdrop-blur-xs flex justify-center items-center">
                         <div className="max-w-60 w-full h-80 bg-[var(--bg-main)] rounded-lg border-2 border-[var(--border-color)] flex flex-col items-center justify-around">
-                            {win ? <h1 className="font-bold text-2xl">You win</h1> : <h1 className="font-bold text-2xl">You lose</h1>}
+                            <div className="font-bold text-5xl">
+                                {win ? <h1 className="text-green-800 dark:text-green-400">You win</h1> : <h1 className="text-red-800 dark:text-red-400">You lose</h1>}
+                            </div>
                             {isHost &&
                                 <button onClick={async () => {
                                     await api.startGame(initialGame.id);
