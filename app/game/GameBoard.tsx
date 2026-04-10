@@ -18,10 +18,11 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
     const [noteModeActive, setNoteModeActive] = useState<boolean>(false);
     const [win, setWin] = useState<boolean>(false);
     const [livesLeft, setLivesLeft] = useState<number>(initialGame.livesLeft);
+    const [startTime, setStartTime] = useState<number>(initialGame.startTime);
 
     const userId = useMemo(() => getUserId(), []);
     const isHost = useMemo(() => userId === initialGame.playerIds[0], [initialGame, userId]);
-    const startTime = initialGame.startTime;
+
 
     const websocketConnection = useOutletContext<WebsocketConnectionContext>();
 
@@ -54,6 +55,8 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
         setNoteModeActive(false);
         setWin(false);
         setLivesLeft(newGame.livesLeft);
+        setStartTime(newGame.startTime);
+
     }, []);
 
     const selectedCellIndexRow = useMemo(() => {
@@ -188,37 +191,38 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                 flex flex-col font-sans text-(--text-main) overflow-x-hidden transition-colors duration-300
             ">
             <HeaderBlock confirmExit />
-            <div className="my-auto px-2 py-4">
-                <div className="p-4 flex justify-around gap-3">
-                    <div className="flex justify-center">
-                        <Heart size={30} fill={livesLeft > 0 ? "red" : "none"} />
-                        <Heart size={30} fill={livesLeft > 1 ? "red" : "none"} />
-                        <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
-                    </div>
-                    <GameStopwatch startTime={startTime}/>
-                </div>
+            <div className="my-auto  px-2 py-4">
                 <div className="w-full flex gap-x-10 gap-y-10 justify-center items-center flex-col md:flex-row">
-                    <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-[var(--thick-board-border)]">
-                        {board.map((cell, index) => {
-                            const rowIndex = Math.floor(index / 9);
-                            const colIndex = index % 9;
+                    <div className="w-full sm:w-xl">
+                        <div className="p-4 flex justify-between">
+                            <div className="flex justify-center">
+                                <Heart size={30} fill={livesLeft > 0 ? "red" : "none"} />
+                                <Heart size={30} fill={livesLeft > 1 ? "red" : "none"} />
+                                <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
+                            </div>
+                            <GameStopwatch startTime={startTime} />
+                        </div>
+                        <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-[var(--thick-board-border)]">
+                            {board.map((cell, index) => {
+                                const rowIndex = Math.floor(index / 9);
+                                const colIndex = index % 9;
 
-                            let sameQuadrant;
-                            if (selectedCellIndexCol === null || selectedCellIndexRow === null) sameQuadrant = null;
-                            else sameQuadrant = Math.floor(selectedCellIndexCol / 3) == Math.floor(colIndex / 3) && Math.floor(selectedCellIndexRow / 3) === Math.floor(rowIndex / 3);
-                            const highlight = selectedCellIndexRow === rowIndex || selectedCellIndexCol === colIndex || sameQuadrant;
+                                let sameQuadrant;
+                                if (selectedCellIndexCol === null || selectedCellIndexRow === null) sameQuadrant = null;
+                                else sameQuadrant = Math.floor(selectedCellIndexCol / 3) == Math.floor(colIndex / 3) && Math.floor(selectedCellIndexRow / 3) === Math.floor(rowIndex / 3);
+                                const highlight = selectedCellIndexRow === rowIndex || selectedCellIndexCol === colIndex || sameQuadrant;
 
-                            let sameNumber;
-                            if (cell.cellValue === 0 || selectedCellIndex === null) sameNumber = null;
-                            else sameNumber = board[selectedCellIndex].cellValue === cell.cellValue;
+                                let sameNumber;
+                                if (cell.cellValue === 0 || selectedCellIndex === null) sameNumber = null;
+                                else sameNumber = board[selectedCellIndex].cellValue === cell.cellValue;
 
-                            const thickBorderRight = (colIndex + 1) % 3 === 0 && colIndex !== 8;
-                            const thickBorderBottom = (rowIndex + 1) % 3 === 0 && rowIndex !== 8;
+                                const thickBorderRight = (colIndex + 1) % 3 === 0 && colIndex !== 8;
+                                const thickBorderBottom = (rowIndex + 1) % 3 === 0 && rowIndex !== 8;
 
-                            return (
-                                <div
-                                    key={index}
-                                    className={`
+                                return (
+                                    <div
+                                        key={index}
+                                        className={`
                                     ${!cell.isCorrect && cell.cellValue !== 0 && "bg-[var(--game-board-cell-error)]"}
                                     ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex === index && "bg-[var(--game-board-cell-hover)]"}
                                     ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && !sameNumber && highlight && "bg-[var(--game-board-cell-hover-secondary)]"}
@@ -233,24 +237,26 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                                     ${colIndex === 8 ? 'border-r-0' : ''}
                                     ${rowIndex === 8 ? 'border-b-0' : ''}
                                 `}
-                                    onClick={() => {
-                                        setSelectedCellIndex(index);
-                                    }}
-                                >
-                                    {cell.cellValue !== 0 && cell.cellValue}
-                                    {cell.cellValue === 0 &&
-                                        <div className="w-full h-full grid grid-cols-3 text-[0.5rem] sm:text-sm">
-                                            {cell.cellNotes.map((noteValue, noteIndex) => (
-                                                <div key={`${index}-${noteIndex}`} className="flex justify-center items-center">
-                                                    {noteValue !== 0 && noteValue}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    }
-                                </div>
-                            );
-                        })}
+                                        onClick={() => {
+                                            setSelectedCellIndex(index);
+                                        }}
+                                    >
+                                        {cell.cellValue !== 0 && cell.cellValue}
+                                        {cell.cellValue === 0 &&
+                                            <div className="w-full h-full grid grid-cols-3 text-[0.5rem] sm:text-sm">
+                                                {cell.cellNotes.map((noteValue, noteIndex) => (
+                                                    <div key={`${index}-${noteIndex}`} className="flex justify-center items-center">
+                                                        {noteValue !== 0 && noteValue}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        }
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
+
 
                     <div className="flex flex-col gap-6">
                         <div className="grid grid-cols-9 md:grid-cols-3 gap-3">
