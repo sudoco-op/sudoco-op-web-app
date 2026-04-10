@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 
-const GameTimer= ({ startTime }:{startTime:number}) => {
+const GameTimer = ({ startTime, stop }: { startTime: number, stop: boolean }) => {
     const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
     console.log(startTime)
 
@@ -15,11 +15,12 @@ const GameTimer= ({ startTime }:{startTime:number}) => {
 
         calculateElapsed();
 
+        if (stop) return;
         // Seting up interval to update every second
         const interval = setInterval(calculateElapsed, 1000);
 
         return () => clearInterval(interval);
-    }, [startTime]);
+    }, [startTime, stop]);
 
     // function to format seconds into MM:SS
     const formatTime = (totalSeconds: number) => {
