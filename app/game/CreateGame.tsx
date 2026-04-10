@@ -11,7 +11,7 @@ const DifficultyButton = ({ difName, isActive, onClick }: { difName: string, isA
             relative z-10 py-3 px-8 
             flex-1 text-center
             hover:cursor-pointer transition-colors duration-300
-            ${isActive ? "text-(--text-main)" : "text-[var(--text-secondary)]"}
+            ${isActive ? "text-(--text-main)" : "text-(--text-secondary)"}
         `}
         onClick={onClick}
     >
@@ -41,15 +41,15 @@ export const CreateGame = () => {
     const [activeDifficulty, setActiveDifficulty] = useState<0 | 1 | 2>(1);
     return (
         <div className="min-h-screen w-screen 
-        animate-float-bg bg-radial-[at_var(--bg-pos)_30%] from-(--bg-main) to-(--bg-card)
+        animate-float-bg bg-radial-[at(--bg-pos)_30% from-(--bg-main) to-(--bg-card)
         flex flex-col justify-between items-center font-sans text-(--text-main) overflow-hidden transition-colors duration-300">
             <HeaderBlock />
             <div className="flex flex-row justify-between gap-16 flex-wrap bg-(--bg-sidebar) p-10 rounded-2xl border-2 border-(--border-color) shadow-2xl hover:shadow-purple-500/20 transition-colors duration-300 mx-4">
 
-                <div className="relative flex flex-col border-4 border-[var(--border-color)] rounded-xl bg-black/5 p-1 w-48 mx-auto">
+                <div className="relative flex flex-col border-4 border-(--border-color) rounded-xl bg-black/5 p-1 w-48 mx-auto">
                     {/* slider block */}
                     <div
-                        className="absolute left-1 right-1 transition-all duration-300 ease-out bg-[var(--primary)] rounded-lg"
+                        className="absolute left-1 right-1 transition-all duration-300 ease-out bg-(--primary) rounded-lg"
                         style={{
                             height: 'calc(33.33% - 3px)', // button height - padding
                             transform: `translateY(${activeDifficulty * 100}%)`,
