@@ -5,6 +5,8 @@ import { api, websocketEmits, websocketEvents, type Game } from "~/api/api";
 import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
 import { getUserId } from "~/auth/auth";
 import HeaderBlock from "~/components/HeaderBlock";
+import GameStopwatch from "~/components/GameTimer";
+
 
 type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
@@ -19,6 +21,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
 
     const userId = useMemo(() => getUserId(), []);
     const isHost = useMemo(() => userId === initialGame.playerIds[0], [initialGame, userId]);
+    const startTime = initialGame.startTime;
 
     const websocketConnection = useOutletContext<WebsocketConnectionContext>();
 
@@ -186,10 +189,13 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
             ">
             <HeaderBlock confirmExit />
             <div className="my-auto px-2 py-4">
-                <div className="p-4 flex justify-center gap-3">
-                    <Heart size={30} fill={livesLeft > 0 ? "red" : "none"} />
-                    <Heart size={30} fill={livesLeft > 1 ? "red" : "none"} />
-                    <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
+                <div className="p-4 flex justify-around gap-3">
+                    <div className="flex justify-center">
+                        <Heart size={30} fill={livesLeft > 0 ? "red" : "none"} />
+                        <Heart size={30} fill={livesLeft > 1 ? "red" : "none"} />
+                        <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
+                    </div>
+                    <GameStopwatch startTime={startTime}/>
                 </div>
                 <div className="w-full flex gap-x-10 gap-y-10 justify-center items-center flex-col md:flex-row">
                     <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-[var(--thick-board-border)]">
