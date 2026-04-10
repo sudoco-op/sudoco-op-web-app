@@ -42,11 +42,11 @@ export const CreateGame = () => {
     return (
         <div className="min-h-screen w-screen 
         animate-float-bg bg-radial-[at_var(--bg-pos)_30%] from-(--bg-main) to-(--bg-card)
-        flex flex-col justify-between items-center gap-60 font-sans text-(--text-main) overflow-hidden transition-colors duration-300 ">
+        flex flex-col justify-between items-center font-sans text-(--text-main) overflow-hidden transition-colors duration-300">
             <HeaderBlock />
-            <div className="flex flex-row justify-between gap-16 bg-(--bg-sidebar) p-10 rounded-2xl border-2 border-(--border-color) shadow-2xl hover:shadow-purple-500/20 transition-colors duration-300">
+            <div className="flex flex-row justify-between gap-16 flex-wrap bg-(--bg-sidebar) p-10 rounded-2xl border-2 border-(--border-color) shadow-2xl hover:shadow-purple-500/20 transition-colors duration-300 mx-4">
 
-                <div className="relative flex flex-col border-4 border-[var(--border-color)] rounded-xl bg-black/5 p-1 w-48">
+                <div className="relative flex flex-col border-4 border-[var(--border-color)] rounded-xl bg-black/5 p-1 w-48 mx-auto">
                     {/* slider block */}
                     <div
                         className="absolute left-1 right-1 transition-all duration-300 ease-out bg-[var(--primary)] rounded-lg"
@@ -73,13 +73,13 @@ export const CreateGame = () => {
                         onClick={() => setActiveDifficulty(2)}
                     />
                 </div>
-                <div className="flex flex-col justify-between">
-                    <div className="w-xl">
+                <div className="flex flex-col justify-between gap-12 mx-auto">
+                    <div className="md:w-lg">
                         {activeDifficulty === 0 && <p className="text-2xl">Easy - only 20 fields are empty. Best option for the new player</p>}
                         {activeDifficulty === 1 && <p className="text-2xl">Medium - 40 fields are empty. Optimal for the chill sudoku solving</p>}
                         {activeDifficulty === 2 && <p className="text-2xl">Hard - 60 fields are empty.<span className="text-(--danger)"> Can you beat it?</span> </p>}
                     </div>
-                    <button disabled={loading} className="h-14 border-4 border-(--accent)/30  px-14 hover:cursor-pointer bg-(--accent) rounded-lg text-2xl font-bold disabled:opacity-50"
+                    <button disabled={loading} className="h-14 border-4 border-(--accent)/30 px-14 hover:cursor-pointer bg-(--accent) rounded-lg text-2xl font-bold disabled:opacity-50"
                         onClick={startGame}
                     >Start</button>
                 </div>
