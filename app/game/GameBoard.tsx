@@ -214,7 +214,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                             </div>
                             <GameTimer startTime={startTime} stop={win || livesLeft <= 0} />
                         </div>
-                        <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-[var(--thick-board-border)]">
+                        <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-(--thick-board-border)">
                             {board.map((cell, index) => {
                                 const rowIndex = Math.floor(index / 9);
                                 const colIndex = index % 9;
@@ -235,17 +235,17 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                                     <div
                                         key={index}
                                         className={`
-                                    ${!cell.isCorrect && cell.cellValue !== 0 && "bg-[var(--game-board-cell-error)]"}
-                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex === index && "bg-[var(--game-board-cell-hover)]"}
-                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && !sameNumber && highlight && "bg-[var(--game-board-cell-hover-secondary)]"}
-                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && sameNumber && "bg-[var(--game-board-cell-same-number)]"}
+                                    ${!cell.isCorrect && cell.cellValue !== 0 && "bg-(--game-board-cell-error)"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex === index && "bg-(--game-board-cell-hover)"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && !sameNumber && highlight && "bg-(--game-board-cell-hover-secondary)"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && sameNumber && "bg-(--game-board-cell-same-number)"}
                                     aspect-square
                                     flex items-center justify-center
                                     text-xl sm:text-2xl font-light
                                     cursor-pointer border-gray-500
                                     transition-colors 
-                                    ${(cell.isCorrect || cell.cellValue === 0) && "hover:bg-[var(--game-board-cell-hover)]"}
-                                    ${thickBorderRight ? "border-r-2 border-r-[var(--thick-board-border)]" : "border-r border-r-slate-500"} ${thickBorderBottom ? "border-b-2 border-b-[var(--thick-board-border)]" : "border-b border-b-slate-500"}
+                                    ${(cell.isCorrect || cell.cellValue === 0) && "hover:bg-(--game-board-cell-hover)"}
+                                    ${thickBorderRight ? "border-r-2 border-r-(--thick-board-border)" : "border-r border-r-slate-500"} ${thickBorderBottom ? "border-b-2 border-b-(--thick-board-border)" : "border-b border-b-slate-500"}
                                     ${colIndex === 8 ? 'border-r-0' : ''}
                                     ${rowIndex === 8 ? 'border-b-0' : ''}
                                 `}
@@ -273,7 +273,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                     <div className="flex flex-col gap-6">
                         <div className="grid grid-cols-9 md:grid-cols-3 gap-3">
                             {digits.map(value => (
-                                <button key={value} className="sm:w-15 text-2xl bg-[var(--game-board-cell-hover-secondary)] sm:rounded-lg rounded-xl flex justify-center items-center aspect-square hover:cursor-pointer p-2 transition-colors hover:text-(--primary-hover)"
+                                <button key={value} className="sm:w-15 text-2xl bg-(--game-board-cell-hover-secondary) sm:rounded-lg rounded-xl flex justify-center items-center aspect-square hover:cursor-pointer p-2 transition-colors hover:text-(--primary-hover)"
                                     onClick={() => handleInput(value)}
                                 >
                                     {value}
@@ -282,14 +282,14 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                         </div>
 
                         <div className="flex justify-center items-center gap-5">
-                            <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-[var(--game-board-cell-hover-secondary)] gap-3 hover:text-(--primary-hover)"
+                            <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-(--game-board-cell-hover-secondary) gap-3 hover:text-(--primary-hover)"
                                 onClick={() => handleClear()}
                             >
                                 <Eraser />
                                 Usuń
                             </button>
 
-                            <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-[var(--game-board-cell-hover-secondary)] relative gap-3 hover:text-(--primary-hover)"
+                            <button className="flex flex-col justify-center items-center py-4 px-2 hover:cursor-pointer rounded-lg bg-(--game-board-cell-hover-secondary) relative gap-3 hover:text-(--primary-hover)"
                                 onClick={() => setNoteModeActive(prev => !prev)}
                             >
                                 <NotebookPen />
@@ -309,7 +309,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
 
                 {(win || livesLeft == 0) &&
                     <div className="absolute top-0 left-0 w-screen h-screen backdrop-blur-xs flex justify-center items-center">
-                        <div className="max-w-60 w-full h-80 bg-[var(--bg-main)] rounded-lg border-2 border-[var(--border-color)] flex flex-col items-center justify-around">
+                        <div className="max-w-60 w-full h-80 bg-(--bg-main) rounded-lg border-2 border-(--border-color) flex flex-col items-center justify-around">
                             <div className="font-bold text-5xl">
                                 {win ? <h1 className="text-green-800 dark:text-green-400">You win</h1> : <h1 className="text-red-800 dark:text-red-400">You lose</h1>}
                             </div>
@@ -321,10 +321,10 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                                     await api.startGame(initialGame.id);
                                     var gameData = await api.getGameData(initialGame.id);
                                     restartGame(gameData);
-                                }} className="p-4 bg-[var(--primary)] rounded-lg hover:cursor-pointer">Restart game</button>
+                                }} className="p-4 bg-(--primary) rounded-lg hover:cursor-pointer">Restart game</button>
                             }
                             <Link to={"/"}>
-                                <button className="p-4 bg-[var(--primary)] rounded-lg hover:cursor-pointer">Main menu</button>
+                                <button className="p-4 bg-(--primary) rounded-lg hover:cursor-pointer">Main menu</button>
                             </Link>
                         </div>
                     </div>
