@@ -35,10 +35,12 @@
   --border-color: #cbd5e1;
 
   --thick-board-border: #000000;
-  --game-board-cell-hover: #7287a6;
+  --game-board-cell-hover: #90a6c7;
   --game-board-cell-hover-secondary: #bbc8e7;
   --game-board-cell-error: #e3686b;
   --game-board-cell-same-number: #a5a588;
+
+  --number-filled: #a09dc4;
 }
 
 @media (prefers-color-scheme: dark) { 
@@ -65,5 +67,7 @@
     --game-board-cell-hover-secondary: #0f172b;
     --game-board-cell-error: #82181a;
     --game-board-cell-same-number: #454534;
+
+    --number-filled: #6e598b;
   }
 }
