@@ -65,5 +65,7 @@
     --game-board-cell-hover-secondary: #0f172b;
     --game-board-cell-error: #82181a;
     --game-board-cell-same-number: #454534;
+
+    --number-filled: #6e598b;
   }
 }
