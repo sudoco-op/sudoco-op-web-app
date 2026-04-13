@@ -383,19 +383,27 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
 
                     <div className="flex flex-col gap-6">
                         <div className="grid grid-cols-9 md:grid-cols-3 gap-3">
-                            {digits.map((value) => (
-                                <button
-                                    key={value}
-                                    className={`sm:w-15 text-2xl 
+                            {digits.map((value) => {
+                                const numberLeft = 9 - board.filter(cell => cell.cellValue == value).length;
+                                return (
+                                    <button
+                                        key={value}
+                                        className={`sm:w-15 text-2xl 
                                     bg-(--game-board-cell-hover-secondary) sm:rounded-lg rounded-xl transition-colors hover:text-(--primary-hover) 
-                                    flex justify-center items-center aspect-square hover:cursor-pointer p-2
-                                    ${isNumberFilled(value) ? "bg-(--number-filled) hover:text-(--text-main)" : ""}`}
-                                    disabled={isNumberFilled(value)}
-                                    onClick={() => handleInput(value)}
-                                >
-                                    {value}
-                                </button>
-                            ))}
+                                    flex flex-col justify-center items-center aspect-square hover:cursor-pointer p-2
+                                    ${isNumberFilled(value) ? "bg-(--number-filled) text-(--text-muted) hover:text-(--text-muted)" : ""}`}
+                                        disabled={isNumberFilled(value)}
+                                        onClick={() => handleInput(value)}
+                                    >
+                                        <p>
+                                            {value}
+                                        </p>
+                                        <p className=" text-sm text-(--text-muted)">
+                                            {numberLeft != 0 && numberLeft}
+                                        </p>
+                                    </button>
+                                )
+                            })}
                         </div>
 
                         <div className="flex justify-center items-center gap-5">

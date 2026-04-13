@@ -40,7 +40,7 @@
   --game-board-cell-error: #e3686b;
   --game-board-cell-same-number: #a5a588;
 
-  --number-filled: #a09dc4;
+  --number-filled: #9db2c4;
 }
 
 @media (prefers-color-scheme: dark) { 
