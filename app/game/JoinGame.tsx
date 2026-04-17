@@ -110,7 +110,7 @@ export const JoinGame: React.FC = () => {
                     {code.map((digit, index) => (
                         <input
                             key={index}
-                            type="text"
+                            type="number"
                             maxLength={1}
                             value={digit}
                             ref={(el) => {
@@ -123,7 +123,7 @@ export const JoinGame: React.FC = () => {
                             onPaste={handlePaste}
                             className="w-10 h-12 text-center text-xl font-bold border-solid border-(--text-muted) 
                        hover:border-(--primary) focus:border-(--primary) focus:outline-none 
-                       hover:shadow-xl shadow-blue-500/20 rounded-sm border-2 bg-transparent transition-all"
+                       hover:shadow-xl shadow-blue-500/20 rounded-sm border-2 bg-transparent transition-all hideArrows"
                         />
                     ))}
                 </div>

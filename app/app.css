@@ -71,3 +71,15 @@
     --number-filled: #6e598b;
   }
 }
+
+/* Chrome, Safari, Edge, Opera */
+.hideArrows::-webkit-outer-spin-button,
+.hideArrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.hideArrows {
+  -moz-appearance: textfield;
+}
