@@ -362,13 +362,13 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                                             setSelectedCellIndex(index);
                                         }}
                                     >
-                                        {cell.cellValue !== 0 && cell.cellValue}
+                                        <span className="font-bold">{cell.cellValue !== 0 && cell.cellValue}</span>
                                         {cell.cellValue === 0 && (
                                             <div className="w-full h-full grid grid-cols-3 text-[0.5rem] sm:text-sm">
                                                 {cell.cellNotes.map((noteValue, noteIndex) => (
                                                     <div
                                                         key={`${index}-${noteIndex}`}
-                                                        className="flex justify-center items-center"
+                                                        className={`flex justify-center items-center rounded-md ${selectedCellIndex !== null && board[selectedCellIndex].cellValue !== 0 && noteValue === board[selectedCellIndex].cellValue && "bg-(--primary)"}`}
                                                     >
                                                         {noteValue !== 0 && noteValue}
                                                     </div>
