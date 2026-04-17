@@ -1,13 +1,12 @@
 import { Eraser, Heart, NotebookPen } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useOutletContext } from "react-router";
-import { api, websocketEmits, websocketEvents, type Game } from "~/api/api";
-import type { WebsocketConnectionContext } from "./GameWebsocketProvider";
-import { getUserId } from "~/auth/auth";
+import { Link } from "react-router";
+import { api, type Game } from "~/api/api";
 import HeaderBlock from "~/components/HeaderBlock";
 
 import GameTimer from "~/components/GameTimer";
 import LobbyCodeBlock from "~/components/LobbyCodeBlock";
+import { useGameBoard } from "./hooks/useGameBoard";
+import { GameBoardCell } from "./GameBoardCell";
 
 type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
@@ -21,270 +20,7 @@ const renderElapsedTime = (startTime: number, endTime: number) => {
 };
 
 export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
-    const [board, setBoard] = useState(initialGame.boardState);
-    const [selectedCellIndex, setSelectedCellIndex] = useState<number | null>(
-        null,
-    );
-    const [noteModeActive, setNoteModeActive] = useState<boolean>(false);
-    const [win, setWin] = useState<boolean>(false);
-    const [livesLeft, setLivesLeft] = useState<number>(initialGame.livesLeft);
-    const [startTime, setStartTime] = useState<number>(initialGame.startTime);
-    const [gameCode, setGameCode] = useState<string>(initialGame.code);
-    const [endTime, setEndTime] = useState<number | null>(null);
-
-    const userId = useMemo(() => getUserId(), []);
-    const isHost = useMemo(
-        () => userId === initialGame.playerIds[0],
-        [initialGame, userId],
-    );
-
-    const websocketConnection = useOutletContext<WebsocketConnectionContext>();
-
-    useEffect(() => {
-        if (websocketConnection) {
-            websocketConnection.on(
-                websocketEvents.ReciveMarkCell,
-                (cellNumber: number, markValue: number, isCorrect: boolean) => {
-                    if (markValue !== 0)
-                        setNumber(cellNumber, markValue as Digit, isCorrect);
-                    else clearNumber(cellNumber);
-                },
-            );
-            websocketConnection.on(websocketEvents.ReciveAddNote, addNote);
-            websocketConnection.on(websocketEvents.ReciveRemoveNote, removeNote);
-            websocketConnection.on(websocketEvents.ReciveRemoveAllNotes, clearNotes);
-            websocketConnection.on(websocketEvents.ReciveStartGame, async () => {
-                const newGame = await api.getGameData(initialGame.id);
-                restartGame(newGame);
-            });
-        }
-
-        return () => {
-            websocketConnection?.off(websocketEvents.ReciveMarkCell);
-            websocketConnection?.off(websocketEvents.ReciveAddNote);
-            websocketConnection?.off(websocketEvents.ReciveRemoveNote);
-            websocketConnection?.off(websocketEvents.ReciveRemoveAllNotes);
-        };
-    }, [websocketConnection]);
-
-    const restartGame = useCallback((newGame: Game) => {
-        setBoard(newGame.boardState);
-        setSelectedCellIndex(null);
-        setNoteModeActive(false);
-        setWin(false);
-        setLivesLeft(newGame.livesLeft);
-        setStartTime(newGame.startTime);
-        setEndTime(null);
-    }, []);
-
-    const selectedCellIndexRow = useMemo(() => {
-        if (selectedCellIndex == null) return null;
-        return Math.floor(selectedCellIndex / 9);
-    }, [selectedCellIndex]);
-
-    const selectedCellIndexCol = useMemo(() => {
-        if (selectedCellIndex == null) return null;
-        return selectedCellIndex % 9;
-    }, [selectedCellIndex]);
-
-    useEffect(() => {
-        if (board.every((bc) => bc.isCorrect)) setWin(true);
-    }, [board]);
-    useEffect(() => {
-        if (win) setEndTime(Date.now());
-    }, [win]);
-
-    const setNumber = useCallback(
-        (index: number, value: Digit, isCorrect: boolean) => {
-            if (!isCorrect) setLivesLeft((prev) => prev - 1);
-            setBoard((prevBoard) =>
-                prevBoard.map((cell, i) =>
-                    i === index
-                        ? { ...cell, cellValue: value, isCorrect: isCorrect }
-                        : cell,
-                ),
-            );
-        },
-        [],
-    );
-
-    const addNote = useCallback((index: number, value: Digit) => {
-        setBoard((prevBoard) =>
-            prevBoard.map((cell, i) =>
-                i === index
-                    ? {
-                        ...cell,
-                        cellNotes: cell.cellNotes.map((prevNote, noteIndex) =>
-                            noteIndex === value - 1 ? value : prevNote,
-                        ),
-                    }
-                    : cell,
-            ),
-        );
-    }, []);
-
-    const removeNote = useCallback((index: number, value: Digit) => {
-        setBoard((prevBoard) =>
-            prevBoard.map((cell, i) =>
-                i === index
-                    ? {
-                        ...cell,
-                        cellNotes: cell.cellNotes.map((prevNote, noteIndex) =>
-                            noteIndex === value - 1 ? 0 : prevNote,
-                        ),
-                    }
-                    : cell,
-            ),
-        );
-    }, []);
-
-    const clearNumber = useCallback((index: number) => {
-        setBoard((prevBoard) =>
-            prevBoard.map((cell, i) =>
-                i === index ? { ...cell, cellValue: 0 } : cell,
-            ),
-        );
-    }, []);
-
-    const clearNotes = useCallback((index: number) => {
-        setBoard((prevBoard) =>
-            prevBoard.map((cell, i) =>
-                i === index
-                    ? {
-                        ...cell,
-                        cellNotes: cell.cellNotes.map((_) => 0),
-                    }
-                    : cell,
-            ),
-        );
-    }, []);
-
-    const toggleNote = useCallback(
-        (index: number, value: Digit) => {
-            if (!websocketConnection || websocketConnection.state !== "Connected")
-                return;
-            if (board[index].cellNotes[value - 1] === 0)
-                websocketConnection.invoke(websocketEmits.AddNote, index, value);
-            else websocketConnection.invoke(websocketEmits.RemoveNote, index, value);
-        },
-        [board, addNote, removeNote, websocketConnection],
-    );
-
-    const handleInput = useCallback(
-        (value: Digit) => {
-            if (!websocketConnection || websocketConnection.state !== "Connected")
-                return;
-            if (selectedCellIndex === null) return;
-            if (noteModeActive) toggleNote(selectedCellIndex, value);
-            else
-                websocketConnection.invoke(
-                    websocketEmits.MarkCell,
-                    selectedCellIndex,
-                    value,
-                );
-        },
-        [
-            selectedCellIndex,
-            noteModeActive,
-            toggleNote,
-            setNumber,
-            websocketConnection,
-        ],
-    );
-
-    const handleClear = useCallback(() => {
-        if (!websocketConnection || websocketConnection.state !== "Connected")
-            return;
-        if (selectedCellIndex === null) return;
-        if (board[selectedCellIndex].cellValue === 0)
-            websocketConnection.invoke(
-                websocketEmits.RemoveAllNotes,
-                selectedCellIndex,
-            );
-        else
-            websocketConnection.invoke(websocketEmits.MarkCell, selectedCellIndex, 0);
-    }, [
-        board,
-        selectedCellIndex,
-        noteModeActive,
-        toggleNote,
-        setNumber,
-        websocketConnection,
-    ]);
-
-    const isNumberFilled = useCallback(
-        (value: Digit) => {
-            if (board.filter(cell => cell.isCorrect).filter(cell => cell.cellValue == value).length === 9) {
-                return true;
-            }
-            else return false;
-        },
-        [board],
-    );
-
-    useEffect(() => {
-        const handleKeyEvent = (e: KeyboardEvent) => {
-            const calmpIndex = (index: number) => Math.min(Math.max(index, 0), 80);
-
-            if (e.key === "ArrowLeft" || e.key === "a") {
-                setSelectedCellIndex((prev) =>
-                    prev !== null ? calmpIndex(prev - 1) : 40,
-                );
-                return;
-            }
-
-            if (e.key === "ArrowRight" || e.key === "d") {
-                setSelectedCellIndex((prev) =>
-                    prev !== null ? calmpIndex(prev + 1) : 40,
-                );
-                return;
-            }
-
-            if (e.key === "ArrowUp" || e.key === "w") {
-                setSelectedCellIndex((prev) =>
-                    prev !== null ? calmpIndex(prev - 9) : 40,
-                );
-                return;
-            }
-
-            if (e.key === "ArrowDown" || e.key === "s") {
-                setSelectedCellIndex((prev) =>
-                    prev !== null ? calmpIndex(prev + 9) : 40,
-                );
-                return;
-            }
-
-            if (e.key === "n") {
-                setNoteModeActive((prev) => !prev);
-                return;
-            }
-        };
-
-        document.addEventListener("keydown", handleKeyEvent);
-        return () => {
-            document.removeEventListener("keydown", handleKeyEvent);
-        };
-    }, []);
-
-    useEffect(() => {
-        const handleKeyEvent = (e: KeyboardEvent) => {
-            if (e.key === "c") {
-                handleClear();
-                return;
-            }
-
-            const digitClicked = Number(e.key) as Digit;
-            if (digits.includes(digitClicked)) {
-                handleInput(digitClicked);
-                return;
-            }
-        };
-
-        document.addEventListener("keydown", handleKeyEvent);
-        return () => {
-            document.removeEventListener("keydown", handleKeyEvent);
-        };
-    }, [handleClear, handleInput]);
+    const { board, selectedCellIndex, setSelectedCellIndex, noteModeActive, setNoteModeActive, livesLeft, startTime, endTime, win, isHost, handleInput, handleClear, restartGame } = useGameBoard(initialGame);
 
     return (
         <div
@@ -307,77 +43,16 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                             <GameTimer startTime={startTime} stop={win || livesLeft <= 0} />
                         </div>
                         <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-(--thick-board-border)">
-                            {board.map((cell, index) => {
-                                const rowIndex = Math.floor(index / 9);
-                                const colIndex = index % 9;
-
-                                let sameQuadrant;
-                                if (
-                                    selectedCellIndexCol === null ||
-                                    selectedCellIndexRow === null
-                                )
-                                    sameQuadrant = null;
-                                else
-                                    sameQuadrant =
-                                        Math.floor(selectedCellIndexCol / 3) ==
-                                        Math.floor(colIndex / 3) &&
-                                        Math.floor(selectedCellIndexRow / 3) ===
-                                        Math.floor(rowIndex / 3);
-                                const highlight =
-                                    selectedCellIndexRow === rowIndex ||
-                                    selectedCellIndexCol === colIndex ||
-                                    sameQuadrant;
-
-                                let sameNumber;
-                                if (cell.cellValue === 0 || selectedCellIndex === null)
-                                    sameNumber = null;
-                                else
-                                    sameNumber =
-                                        board[selectedCellIndex].cellValue === cell.cellValue;
-
-                                const thickBorderRight =
-                                    (colIndex + 1) % 3 === 0 && colIndex !== 8;
-                                const thickBorderBottom =
-                                    (rowIndex + 1) % 3 === 0 && rowIndex !== 8;
-
-                                return (
-                                    <div
-                                        key={index}
-                                        className={`
-                                    ${!cell.isCorrect && cell.cellValue !== 0 && "bg-(--game-board-cell-error)"}
-                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex === index && "bg-(--game-board-cell-hover)"}
-                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && !sameNumber && highlight && "bg-(--game-board-cell-hover-secondary)"}
-                                    ${(cell.isCorrect || cell.cellValue === 0) && selectedCellIndex !== index && sameNumber && "bg-(--game-board-cell-same-number)"}
-                                    aspect-square
-                                    flex items-center justify-center
-                                    text-xl sm:text-2xl font-light
-                                    cursor-pointer border-gray-500
-                                    transition-colors 
-                                    ${(cell.isCorrect || cell.cellValue === 0) && "hover:bg-(--game-board-cell-hover)"}
-                                    ${thickBorderRight ? "border-r-2 border-r-(--thick-board-border)" : "border-r border-r-slate-500"} ${thickBorderBottom ? "border-b-2 border-b-(--thick-board-border)" : "border-b border-b-slate-500"}
-                                    ${colIndex === 8 ? "border-r-0" : ""}
-                                    ${rowIndex === 8 ? "border-b-0" : ""}
-                                `}
-                                        onClick={() => {
-                                            setSelectedCellIndex(index);
-                                        }}
-                                    >
-                                        <span className="font-bold">{cell.cellValue !== 0 && cell.cellValue}</span>
-                                        {cell.cellValue === 0 && (
-                                            <div className="w-full h-full grid grid-cols-3 text-[0.5rem] sm:text-sm">
-                                                {cell.cellNotes.map((noteValue, noteIndex) => (
-                                                    <div
-                                                        key={`${index}-${noteIndex}`}
-                                                        className={`flex justify-center items-center rounded-md ${selectedCellIndex !== null && board[selectedCellIndex].cellValue !== 0 && noteValue === board[selectedCellIndex].cellValue && "bg-(--primary)"}`}
-                                                    >
-                                                        {noteValue !== 0 && noteValue}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
+                            {board.map((cell, index) =>
+                                <GameBoardCell
+                                    key={index}
+                                    cell={cell}
+                                    index={index}
+                                    selectedCellIndex={selectedCellIndex}
+                                    selectedValue={selectedCellIndex !== null ? board[selectedCellIndex].cellValue : null}
+                                    setSelectedCellIndex={setSelectedCellIndex}
+                                />
+                            )}
                         </div>
                     </div>
 
@@ -388,16 +63,16 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                                 return (
                                     <button
                                         key={value}
-                                        className={`sm:w-15 text-2xl 
-                                    bg-(--game-board-cell-hover-secondary) sm:rounded-lg rounded-xl transition-colors hover:text-(--primary-hover) 
-                                    flex flex-col justify-center items-center aspect-square hover:cursor-pointer p-2
-                                    ${isNumberFilled(value) ? "bg-(--number-filled) text-(--text-muted) hover:text-(--text-muted)" : ""}`}
-                                        disabled={isNumberFilled(value)}
+                                        className={`
+                                            sm:w-15 text-2xl
+                                            bg-(--game-board-cell-hover-secondary) sm:rounded-lg rounded-xl transition-colors hover:text-(--primary-hover) 
+                                            flex flex-col justify-center items-center aspect-square hover:cursor-pointer p-2
+                                            ${numberLeft === 0 && "bg-(--number-filled) text-(--text-muted) hover:text-(--text-muted)"}`
+                                        }
+                                        disabled={numberLeft === 0}
                                         onClick={() => handleInput(value)}
                                     >
-                                        <p>
-                                            {value}
-                                        </p>
+                                        <p>{value}</p>
                                         <p className=" text-sm text-(--text-muted)">
                                             {numberLeft != 0 && numberLeft}
                                         </p>
@@ -431,7 +106,7 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                         <div className="flex flex-col text-center">
                             <p className="text-xl font-bold">Lobby Code:</p>
 
-                            <LobbyCodeBlock code={gameCode}></LobbyCodeBlock>
+                            <LobbyCodeBlock code={initialGame.code}></LobbyCodeBlock>
                         </div>
                     </div>
                 </div>
