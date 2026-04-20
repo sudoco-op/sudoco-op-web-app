@@ -52,7 +52,7 @@ export const GameBoardCell = ({ cell, index, selectedValue, selectedCellIndex, s
                     {cell.cellNotes.map((noteValue, noteIndex) => (
                         <div
                             key={`${index}-${noteIndex}`}
-                            className={`flex justify-center items-center rounded-md ${selectedCellIndex !== null && selectedValue !== 0 && noteValue === selectedValue && "bg-(--primary)"}`}
+                            className={`flex justify-center items-center aspect-square rounded-md ${selectedCellIndex !== null && selectedValue !== 0 && noteValue === selectedValue && "bg-(--primary)"}`}
                         >
                             {noteValue !== 0 && noteValue}
                         </div>
