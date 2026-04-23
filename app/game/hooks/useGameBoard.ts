@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type SetStateAction } from "react";
 import { useOutletContext } from "react-router";
 import { api, websocketEmits, websocketEvents, type Game } from "~/api/api";
 import type { WebsocketConnectionContext } from "../GameWebsocketProvider";
@@ -116,25 +116,37 @@ export const useGameBoard = (initialGame: Game) => {
     useEffect(() => {
         const handleKeyEvent = (e: KeyboardEvent) => {
 
-            const calmpIndex = (index: number) => Math.min(Math.max(index, 0), 80)
+            const updateIndexX = (prevIndex: number | null, newIndex: number) => {
+                if (prevIndex === null) return newIndex;
+                const prevIndexRow = Math.floor(prevIndex / 9);
+                const newIndexRow = Math.floor(newIndex / 9);
+                if (prevIndexRow !== newIndexRow) return newIndex - 9 * (newIndexRow - prevIndexRow);
+                return newIndex;
+            }
+
+            const updateIndexY = (newIndex: number) => {
+                if (newIndex > 81) return newIndex - 81;
+                if (newIndex < 0) return newIndex + 81;
+                return newIndex;
+            }
 
             if (e.key === "ArrowLeft" || e.key === "a") {
-                setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev - 1) : 40);
+                setSelectedCellIndex((prev) => updateIndexX(prev, prev !== null ? prev - 1 : 40));
                 return;
             }
 
             if (e.key === "ArrowRight" || e.key === "d") {
-                setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev + 1) : 40);
+                setSelectedCellIndex((prev) => updateIndexX(prev, prev !== null ? prev + 1 : 40));
                 return;
             }
 
             if (e.key === "ArrowUp" || e.key === "w") {
-                setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev - 9) : 40);
+                setSelectedCellIndex((prev) => updateIndexY(prev !== null ? prev - 9 : 40));
                 return;
             }
 
             if (e.key === "ArrowDown" || e.key === "s") {
-                setSelectedCellIndex(prev => prev !== null ? calmpIndex(prev + 9) : 40);
+                setSelectedCellIndex((prev) => updateIndexY(prev !== null ? prev + 9 : 40));
                 return;
             }
 

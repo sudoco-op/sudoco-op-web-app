@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 const GameTimer = ({ startTime, stop }: { startTime: number, stop: boolean }) => {
     const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
-    console.log(startTime)
+    // console.log(startTime)
 
     useEffect(() => {
         // Initial time diffrence calculation
