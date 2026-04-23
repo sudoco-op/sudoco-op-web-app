@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type SetStateAction } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router";
 import { api, websocketEmits, websocketEvents, type Game } from "~/api/api";
 import type { WebsocketConnectionContext } from "../GameWebsocketProvider";
@@ -125,27 +125,27 @@ export const useGameBoard = (initialGame: Game) => {
             }
 
             const updateIndexY = (newIndex: number) => {
-                if (newIndex > 81) return newIndex - 81;
+                if (newIndex > 80) return newIndex - 81;
                 if (newIndex < 0) return newIndex + 81;
                 return newIndex;
             }
 
-            if (e.key === "ArrowLeft" || e.key === "a") {
+            if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
                 setSelectedCellIndex((prev) => updateIndexX(prev, prev !== null ? prev - 1 : 40));
                 return;
             }
 
-            if (e.key === "ArrowRight" || e.key === "d") {
+            if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
                 setSelectedCellIndex((prev) => updateIndexX(prev, prev !== null ? prev + 1 : 40));
                 return;
             }
 
-            if (e.key === "ArrowUp" || e.key === "w") {
+            if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
                 setSelectedCellIndex((prev) => updateIndexY(prev !== null ? prev - 9 : 40));
                 return;
             }
 
-            if (e.key === "ArrowDown" || e.key === "s") {
+            if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
                 setSelectedCellIndex((prev) => updateIndexY(prev !== null ? prev + 9 : 40));
                 return;
             }
