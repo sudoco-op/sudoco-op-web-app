@@ -26,7 +26,7 @@ export function Menu() {
 
                     <div className="flex flex-col gap-5 w-full max-w-sm px-6">
                         <Link to="/create-game">
-                            <button className="group w-full relative flex items-center justify-between p-6 bg-(--primary) hover:bg-(--primary-hover) text-(--text-inverse) transition-all duration-300 rounded-2xl shadow-xl shadow-purple-500/20 active:scale-[0.98]">
+                            <button className="group w-full relative flex items-center justify-between p-6 bg-(--primary) hover:bg-(--primary-hover) text-(--text-inverse) transition-all duration-300 rounded-2xl shadow-xl shadow-blue-500/30 dark:shadow-purple-500/20 active:scale-[0.98]">
                                 <div className="flex items-center gap-4">
                                     <Play className="fill-current group-hover:translate-x-1 transition-transform" size={20} />
                                     <span className="text-xl font-bold">Create Game</span>
