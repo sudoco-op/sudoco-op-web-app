@@ -20,7 +20,7 @@ const renderElapsedTime = (startTime: number, endTime: number) => {
 };
 
 export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
-    const { board, selectedCellIndex, setSelectedCellIndex, noteModeActive, setNoteModeActive, livesLeft, startTime, endTime, win, isHost, handleInput, handleClear, restartGame } = useGameBoard(initialGame);
+    const { board, selectedCellIndex, setSelectedCellIndex, noteModeActive, setNoteModeActive, livesLeft, startTime, endTime, isHost, handleInput, handleClear, restartGame } = useGameBoard(initialGame);
 
     return (
         <div
@@ -40,7 +40,12 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                                 <Heart size={30} fill={livesLeft > 1 ? "red" : "none"} />
                                 <Heart size={30} fill={livesLeft > 2 ? "red" : "none"} />
                             </div>
-                            <GameTimer startTime={startTime} stop={win || livesLeft <= 0} />
+                            {endTime !== 0 ? (
+                                <h1 className="text-2xl font-bold">{renderElapsedTime(startTime, endTime)}</h1>
+                            ) : (
+                                <GameTimer startTime={startTime} stop={endTime != 0 || livesLeft <= 0} />
+                            )}
+
                         </div>
                         <div className="w-full sm:w-xl aspect-square grid grid-cols-9 border-2 border-(--thick-board-border)">
                             {board.map((cell, index) =>
@@ -111,11 +116,11 @@ export const GameBoard = ({ initialGame }: { initialGame: Game }) => {
                     </div>
                 </div>
 
-                {(win || livesLeft == 0) && (
+                {(endTime !== 0 || livesLeft <= 0) && (
                     <div className="absolute top-0 left-0 w-screen h-screen backdrop-blur-xs flex justify-center items-center">
                         <div className="max-w-60 w-full h-80 bg-(--bg-main) rounded-lg border-2 border-(--border-color) flex flex-col items-center justify-around">
                             <div className="font-bold text-5xl">
-                                {win ? (
+                                {endTime !== 0 ? (
                                     <h1 className="text-green-800 dark:text-green-400">
                                         You win
                                     </h1>

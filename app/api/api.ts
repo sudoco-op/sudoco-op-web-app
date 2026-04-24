@@ -13,6 +13,7 @@ export type Game = {
     playerIds: string[];
     boardState: BoardCell[];
     startTime: number;
+    endTime: number;
 }
 
 export type CreateGameResponse = {
@@ -47,6 +48,7 @@ export const websocketEvents = {
     ReciveNewPlayerJoined: "ReciveNewPlayerJoined",
     ReciveMarkCell: "ReciveMarkCell",
     ReciveStartGame: "ReciveStartGame",
+    ReciveEndGame: "ReciveEndGame",
     ReciveAddNote: "ReciveAddNote",
     ReciveRemoveNote: "ReciveRemoveNote",
     ReciveRemoveAllNotes: "ReciveRemoveAllNotes"

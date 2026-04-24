@@ -11,10 +11,9 @@ export const useGameBoard = (initialGame: Game) => {
     const [board, setBoard] = useState(initialGame.boardState);
     const [selectedCellIndex, setSelectedCellIndex] = useState<number | null>(null);
     const [noteModeActive, setNoteModeActive] = useState<boolean>(false);
-    const [win, setWin] = useState<boolean>(false);
     const [livesLeft, setLivesLeft] = useState<number>(initialGame.livesLeft);
     const [startTime, setStartTime] = useState<number>(initialGame.startTime);
-    const [endTime, setEndTime] = useState<number | null>(null);
+    const [endTime, setEndTime] = useState<number>(initialGame.endTime);
 
     const userId = useMemo(() => getUserId(), []);
     const isHost = useMemo(() => userId === initialGame.playerIds[0], [initialGame, userId]);
@@ -34,6 +33,7 @@ export const useGameBoard = (initialGame: Game) => {
                 const newGame = await api.getGameData(initialGame.id);
                 restartGame(newGame);
             });
+            websocketConnection.on(websocketEvents.ReciveEndGame, (endTime: number) => setEndTime(endTime));
         }
 
         return () => {
@@ -48,14 +48,10 @@ export const useGameBoard = (initialGame: Game) => {
         setBoard(newGame.boardState);
         setSelectedCellIndex(null);
         setNoteModeActive(false);
-        setWin(false);
         setLivesLeft(newGame.livesLeft);
         setStartTime(newGame.startTime);
-        setEndTime(null);
+        setEndTime(0);
     }, []);
-
-    useEffect(() => { if (board.every(bc => bc.isCorrect)) setWin(true); }, [board])
-    useEffect(() => { if (win) setEndTime(Date.now()) }, [win])
 
     const setNumber = useCallback((index: number, value: Digit, isCorrect: boolean) => {
         if (!isCorrect) setLivesLeft(prev => prev - 1);
@@ -182,6 +178,6 @@ export const useGameBoard = (initialGame: Game) => {
         }
     }, [handleClear, handleInput]);
 
-    return { board, selectedCellIndex, setSelectedCellIndex, noteModeActive, setNoteModeActive, livesLeft, startTime, endTime, win, isHost, handleInput, handleClear, restartGame }
+    return { board, selectedCellIndex, setSelectedCellIndex, noteModeActive, setNoteModeActive, livesLeft, startTime, endTime, isHost, handleInput, handleClear, restartGame }
 }
 
